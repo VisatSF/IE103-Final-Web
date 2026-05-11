@@ -296,7 +296,7 @@ app.post('/api/orders', async (request, response) => {
       discountAmount = computeDiscount(promotion, subtotalAmount);
     }
 
-    const orderId = await createOrder({
+    const createResult = await createOrder({
       userId,
       storeId,
       customerName,
@@ -313,6 +313,9 @@ app.post('/api/orders', async (request, response) => {
       })),
     });
 
+    const orderId = createResult.orderId;
+    const storeOrderNumber = createResult.storeOrderNumber;
+
     if (promotion) {
       await recordPromotionUsage({
         promotionId: promotion.id,
@@ -324,6 +327,7 @@ app.post('/api/orders', async (request, response) => {
 
     console.log('[POST /api/orders] order created successfully', {
       orderId,
+      storeOrderNumber,
       userId,
       storeId,
       customerEmail: normalizedEmail,
@@ -333,6 +337,7 @@ app.post('/api/orders', async (request, response) => {
 
     response.status(201).json({
       orderId,
+      storeOrderNumber,
       discountAmount,
       totalAmount: Math.max(0, subtotalAmount - discountAmount),
     });
@@ -362,6 +367,7 @@ app.get('/api/orders', async (request, response) => {
     response.json({
       orders: orders.map((order) => ({
         id: order.id,
+        storeOrderNumber: order.store_order_number,
         userId: order.user_id,
         storeId: order.store_id,
         customerName: order.customer_name,
@@ -414,6 +420,7 @@ app.get('/api/store/dashboard/:storeId', async (request, response) => {
       stats,
       orders: orders.map((order) => ({
         id: order.id,
+        storeOrderNumber: order.store_order_number,
         userId: order.user_id,
         customerName: order.customer_name,
         customerEmail: order.customer_email,
