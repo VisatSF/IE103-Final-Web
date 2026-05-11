@@ -1,5 +1,5 @@
--- Full MySQL stored procedure layer for Jobillee
--- Apply after schema.sql.
+
+DELIMITER $$
 
 DROP PROCEDURE IF EXISTS sp_get_menu_categories$$
 DROP PROCEDURE IF EXISTS sp_get_all_menu_items$$
@@ -27,8 +27,6 @@ DROP PROCEDURE IF EXISTS sp_clear_orders_for_store$$
 DROP PROCEDURE IF EXISTS sp_get_store_cleanup_settings$$
 DROP PROCEDURE IF EXISTS sp_update_store_cleanup_settings$$
 DROP PROCEDURE IF EXISTS sp_cleanup_store_orders_before$$
-
-DELIMITER $$
 
 CREATE PROCEDURE sp_get_menu_categories()
 BEGIN
