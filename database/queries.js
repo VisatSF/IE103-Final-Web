@@ -278,17 +278,48 @@ export async function createOrder(payload) {
     const totalAmount = Math.max(0, subtotalAmount - discountAmount);
 
     await connection.query(
-      `INSERT INTO order_sequences (store_id, last_number) VALUES (?, 1)
-       ON DUPLICATE KEY UPDATE last_number = last_number + 1`,
+      `INSERT INTO order_sequences (store_id, last_number)
+       VALUES (?, 0)
+       ON DUPLICATE KEY UPDATE last_number = last_number`,
       [storeId]
     );
 
     const [seqRows] = await connection.query(
-      `SELECT last_number FROM order_sequences WHERE store_id = ? FOR UPDATE LIMIT 1`,
+      `SELECT last_number
+       FROM order_sequences
+       WHERE store_id = ?
+       FOR UPDATE`,
       [storeId]
     );
 
-    const storeOrderNumber = seqRows && seqRows[0] ? Number(seqRows[0].last_number) : null;
+    let currentLastNumber = Number(seqRows?.[0]?.last_number || 0);
+
+    if (currentLastNumber === 0) {
+      const [statsRows] = await connection.query(
+        `SELECT GREATEST(COALESCE(MAX(store_order_number), 0), COUNT(*)) AS current_last
+         FROM orders
+         WHERE store_id = ?`,
+        [storeId]
+      );
+
+      currentLastNumber = Number(statsRows?.[0]?.current_last || 0);
+
+      await connection.query(
+        `UPDATE order_sequences
+         SET last_number = ?
+         WHERE store_id = ?`,
+        [currentLastNumber, storeId]
+      );
+    }
+
+    const storeOrderNumber = currentLastNumber + 1;
+
+    await connection.query(
+      `UPDATE order_sequences
+       SET last_number = ?
+       WHERE store_id = ?`,
+      [storeOrderNumber, storeId]
+    );
 
     const [orderResult] = await connection.query(
       `INSERT INTO orders (
