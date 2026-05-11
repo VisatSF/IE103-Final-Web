@@ -88,6 +88,39 @@ function computeDiscount(promotion, subtotalAmount) {
   return Math.min(subtotalAmount, Number(promotion.discount_value));
 }
 
+function normalizeText(value = '') {
+  return String(value)
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase()
+    .trim();
+}
+
+function getPromotionValidationMessage(promotion, items, now = new Date()) {
+  if (!promotion) {
+    return '';
+  }
+
+  const promoCode = String(promotion.promo_code || '').trim().toUpperCase();
+  const normalizedNames = (items || []).map((item) => normalizeText(item.itemName ?? item.name ?? ''));
+
+  if (promoCode === 'FAMILY30') {
+    const eligible = normalizedNames.length > 0 && normalizedNames.every((name) => name.includes('combo gia dinh'));
+    return eligible ? '' : 'Mã FAMILY30 chỉ áp dụng cho Combo Gia Đình.';
+  }
+
+  if (promoCode === 'CHICKEN2FOR1') {
+    const eligible = normalizedNames.length > 0 && normalizedNames.every((name) => name.includes('ga gion vui ve (2 mieng)'));
+    return eligible ? '' : 'Mã CHICKEN2FOR1 chỉ áp dụng cho Gà Giòn Vui Vẻ (2 miếng).';
+  }
+
+  if (promoCode === 'MONDAY20') {
+    return now.getDay() === 1 ? '' : 'Mã MONDAY20 chỉ áp dụng vào thứ 2.';
+  }
+
+  return '';
+}
+
 app.get('/api/health', async (_request, response) => {
   try {
     await checkDatabaseConnection();
@@ -291,6 +324,11 @@ app.post('/api/orders', async (request, response) => {
 
       if (used) {
         return response.status(409).json({ message: 'Mã khuyến mãi này đã được sử dụng trước đó.' });
+      }
+
+      const promotionValidationMessage = getPromotionValidationMessage(promotion, items, new Date());
+      if (promotionValidationMessage) {
+        return response.status(400).json({ message: promotionValidationMessage });
       }
 
       discountAmount = computeDiscount(promotion, subtotalAmount);
