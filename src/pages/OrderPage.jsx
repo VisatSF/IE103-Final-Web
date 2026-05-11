@@ -19,11 +19,23 @@ function calculateDiscount(promotion, subtotalAmount) {
     return 0;
   }
 
+  if (String(promotion.code || '').trim().toUpperCase() === 'CHICKEN2FOR1') {
+    return 0;
+  }
+
   if (promotion.discountType === 'percentage') {
     return Math.round((subtotalAmount * Number(promotion.discountValue)) / 100);
   }
 
   return Math.min(subtotalAmount, Number(promotion.discountValue));
+}
+
+function getPromotionOrderNote(promotion) {
+  if (String(promotion?.code || '').trim().toUpperCase() !== 'CHICKEN2FOR1') {
+    return '';
+  }
+
+  return 'CHICKEN2FOR1: làm thêm 1 miếng gà cho phần này.';
 }
 
 function normalizeText(value = '') {
@@ -202,7 +214,7 @@ export default function OrderPage() {
         customerEmail: formData.customerEmail,
         customerPhone: formData.customerPhone,
         storeId: Number(formData.storeId),
-        notes: formData.notes,
+        notes: [formData.notes, getPromotionOrderNote(appliedPromotion)].filter(Boolean).join('\n'),
         promotionCode: appliedPromotion?.code || '',
         items: cart.map((item) => ({
           menuItemId: item.menuItemId ?? item.id,
