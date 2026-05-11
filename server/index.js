@@ -81,11 +81,23 @@ function computeDiscount(promotion, subtotalAmount) {
     return 0;
   }
 
+  if (String(promotion.promo_code || '').trim().toUpperCase() === 'CHICKEN2FOR1') {
+    return 0;
+  }
+
   if (promotion.discount_type === 'percentage') {
     return Math.round((subtotalAmount * Number(promotion.discount_value)) / 100);
   }
 
   return Math.min(subtotalAmount, Number(promotion.discount_value));
+}
+
+function getPromotionOrderNote(promotion) {
+  if (String(promotion?.promo_code || '').trim().toUpperCase() !== 'CHICKEN2FOR1') {
+    return '';
+  }
+
+  return 'CHICKEN2FOR1: làm thêm 1 miếng gà cho phần này.';
 }
 
 function normalizeText(value = '') {
@@ -334,6 +346,8 @@ app.post('/api/orders', async (request, response) => {
       discountAmount = computeDiscount(promotion, subtotalAmount);
     }
 
+    const orderNotes = [notes, getPromotionOrderNote(promotion)].filter(Boolean).join('\n');
+
     const createResult = await createOrder({
       userId,
       storeId,
@@ -341,7 +355,7 @@ app.post('/api/orders', async (request, response) => {
       customerEmail: normalizedEmail,
       customerPhone,
       promotionCode: promotion?.promo_code || null,
-      notes,
+      notes: orderNotes,
       discountAmount,
       items: items.map((item) => ({
         menuItemId: item.menuItemId ?? item.id,
