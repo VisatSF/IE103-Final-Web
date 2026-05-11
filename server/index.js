@@ -257,6 +257,16 @@ app.post('/api/orders', async (request, response) => {
       items = [],
     } = request.body;
 
+    console.log('[POST /api/orders] incoming order request', {
+      userId,
+      storeId,
+      customerEmail,
+      customerPhone,
+      promotionCode,
+      itemCount: items.length,
+      status: 'received',
+    });
+
     const subtotalAmount = items.reduce(
       (sum, item) => sum + Number(item.unitPrice ?? item.price) * Number(item.quantity),
       0
@@ -312,12 +322,25 @@ app.post('/api/orders', async (request, response) => {
       });
     }
 
+    console.log('[POST /api/orders] order created successfully', {
+      orderId,
+      userId,
+      storeId,
+      customerEmail: normalizedEmail,
+      discountAmount,
+      totalAmount: Math.max(0, subtotalAmount - discountAmount),
+    });
+
     response.status(201).json({
       orderId,
       discountAmount,
       totalAmount: Math.max(0, subtotalAmount - discountAmount),
     });
   } catch (error) {
+    console.error('[POST /api/orders] order creation failed', {
+      message: error.message,
+      stack: error.stack,
+    });
     response.status(500).json({ message: error.message });
   }
 });
