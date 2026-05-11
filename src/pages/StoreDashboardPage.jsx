@@ -44,7 +44,7 @@ function formatDateTime(dateString) {
 }
 
 function StoreDashboardPage() {
-  const { user } = useAuth();
+  const { user, isLoading } = useAuth();
   const currentStoreId = user?.storeId ?? null;
   const [store, setStore] = useState(null);
   const [orders, setOrders] = useState([]);
@@ -58,7 +58,7 @@ function StoreDashboardPage() {
   const [cleanupSettings, setCleanupSettings] = useState({
     autoClearPeriod: 'manual',
   });
-  const [isLoading, setIsLoading] = useState(true);
+  const [isDashboardLoading, setIsDashboardLoading] = useState(true);
 
   async function loadDashboard({ notify = false } = {}) {
     if (!currentStoreId) {
@@ -66,7 +66,7 @@ function StoreDashboardPage() {
     }
 
     try {
-      setIsLoading(true);
+      setIsDashboardLoading(true);
       const cleanupResult = await runStoreCleanupApi(currentStoreId);
       const dashboard = await getStoreDashboardApi(currentStoreId);
 
@@ -85,13 +85,29 @@ function StoreDashboardPage() {
     } catch (error) {
       toast.error(error.message);
     } finally {
-      setIsLoading(false);
+      setIsDashboardLoading(false);
     }
   }
 
   useEffect(() => {
     loadDashboard();
   }, [currentStoreId]);
+
+  // Show loading while auth is being restored
+  if (isLoading) {
+    return (
+      <>
+        <Header />
+        <main className="min-h-[calc(100vh-400px)] bg-[rgb(var(--jobillee-cream))] py-20 flex items-center justify-center">
+          <div className="text-center">
+            <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-[rgb(var(--jobillee-red))]"></div>
+            <p className="mt-4 text-gray-600">Đang tải...</p>
+          </div>
+        </main>
+        <Footer />
+      </>
+    );
+  }
 
   if (!user || user.role !== 'store_manager') {
     return <Navigate to="/login" replace />;
@@ -231,7 +247,7 @@ function StoreDashboardPage() {
               </div>
 
               <div className="p-6 space-y-6">
-                {isLoading ? (
+                {isDashboardLoading ? (
                   <div className="rounded-2xl bg-[rgb(var(--jobillee-cream))] p-8 text-center text-gray-600">
                     Đang tải danh sách đơn hàng...
                   </div>
