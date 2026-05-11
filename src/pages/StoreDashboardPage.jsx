@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { Helmet } from 'react-helmet';
 import { Navigate } from 'react-router-dom';
 import { ClipboardList, Clock3, CircleDollarSign, ChefHat, CheckCircle2, MapPin, Phone, Trash2, Settings2 } from 'lucide-react';
@@ -60,7 +60,7 @@ function StoreDashboardPage() {
   });
   const [isDashboardLoading, setIsDashboardLoading] = useState(true);
 
-  async function loadDashboard({ notify = false } = {}) {
+  const loadDashboard = useCallback(async ({ notify = false } = {}) => {
     if (!currentStoreId) {
       return;
     }
@@ -87,11 +87,11 @@ function StoreDashboardPage() {
     } finally {
       setIsDashboardLoading(false);
     }
-  }
+  }, [currentStoreId]);
 
   useEffect(() => {
     loadDashboard();
-  }, [currentStoreId]);
+  }, [loadDashboard]);
 
   // Show loading while auth is being restored
   if (isLoading) {
@@ -271,6 +271,11 @@ function StoreDashboardPage() {
                           <p className="mt-3 text-gray-700 font-medium">{order.customerName}</p>
                           <p className="mt-1 text-sm text-gray-500">{order.customerEmail} | {order.customerPhone}</p>
                           <p className="mt-1 text-sm text-gray-500">Tạo lúc: {formatDateTime(order.createdAt)}</p>
+                          {order.promotionCode ? (
+                            <p className="mt-2 inline-flex rounded-full bg-[rgb(var(--jobillee-yellow))]/20 px-3 py-1 text-sm font-semibold text-[rgb(var(--jobillee-dark))]">
+                              Voucher: {order.promotionCode}
+                            </p>
+                          ) : null}
                           {order.notes ? (
                             <p className="mt-3 rounded-xl bg-[rgb(var(--jobillee-cream))] px-4 py-3 text-sm text-gray-700">
                               Ghi chú: {order.notes}
@@ -330,7 +335,7 @@ function StoreDashboardPage() {
                               <span>{formatPrice(order.subtotalAmount)}đ</span>
                             </div>
                             <div className="flex justify-between">
-                              <span>Giảm giá</span>
+                              <span>Giá đã giảm</span>
                               <span>- {formatPrice(order.discountAmount)}đ</span>
                             </div>
                             <div className="flex justify-between font-semibold text-[rgb(var(--jobillee-red))] pt-2 border-t border-white/70">
