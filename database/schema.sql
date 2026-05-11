@@ -249,6 +249,7 @@ CREATE TABLE IF NOT EXISTS job_applications (
 
 CREATE TABLE IF NOT EXISTS orders (
   id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+  store_order_number BIGINT UNSIGNED NULL,
   user_id BIGINT UNSIGNED NULL,
   store_id BIGINT UNSIGNED NOT NULL,
   customer_name VARCHAR(150) NOT NULL,
@@ -266,6 +267,7 @@ CREATE TABLE IF NOT EXISTS orders (
   KEY idx_orders_user_id (user_id),
   KEY idx_orders_store_id (store_id),
   KEY idx_orders_status_created_at (status, created_at),
+  UNIQUE KEY uq_store_order_number (store_id, store_order_number),
   CONSTRAINT fk_orders_user_id
     FOREIGN KEY (user_id) REFERENCES users (id)
     ON DELETE SET NULL
@@ -294,5 +296,15 @@ CREATE TABLE IF NOT EXISTS order_items (
   CONSTRAINT fk_order_items_menu_item_id
     FOREIGN KEY (menu_item_id) REFERENCES menu_items (id)
     ON DELETE SET NULL
+    ON UPDATE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS order_sequences (
+  store_id BIGINT UNSIGNED NOT NULL,
+  last_number BIGINT UNSIGNED NOT NULL DEFAULT 0,
+  PRIMARY KEY (store_id),
+  CONSTRAINT fk_order_sequences_store_id
+    FOREIGN KEY (store_id) REFERENCES stores (id)
+    ON DELETE CASCADE
     ON UPDATE CASCADE
 );
