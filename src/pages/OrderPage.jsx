@@ -114,7 +114,10 @@ export default function OrderPage() {
           return;
         }
 
-        setStores(nextStores || []);
+        const uniqueStores = Array.from(
+          new Map((nextStores || []).map((store) => [store.id, store])).values()
+        );
+        setStores(uniqueStores);
         setAvailablePromotions(promotionsResponse.promotions || []);
         setFormData((current) => ({
           ...current,
