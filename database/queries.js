@@ -277,7 +277,6 @@ export async function createOrder(payload) {
     const discountAmount = Number(payload.discountAmount || 0);
     const totalAmount = Math.max(0, subtotalAmount - discountAmount);
 
-    // allocate per-store sequential number in a transaction-safe way
     await connection.query(
       `INSERT INTO order_sequences (store_id, last_number) VALUES (?, 1)
        ON DUPLICATE KEY UPDATE last_number = last_number + 1`,
@@ -285,7 +284,7 @@ export async function createOrder(payload) {
     );
 
     const [seqRows] = await connection.query(
-      `SELECT last_number FROM order_sequences WHERE store_id = ? LIMIT 1`,
+      `SELECT last_number FROM order_sequences WHERE store_id = ? FOR UPDATE LIMIT 1`,
       [storeId]
     );
 
