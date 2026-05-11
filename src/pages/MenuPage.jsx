@@ -12,12 +12,76 @@ function formatVnd(amount) {
   return `${new Intl.NumberFormat('vi-VN').format(Number(amount) || 0)}đ`;
 }
 
+function normalizeItemName(name) {
+  return name
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/[^\w\s]/g, '')
+    .trim();
+}
+
 function MenuPage() {
   const [activeCategory, setActiveCategory] = useState('');
   const [categories, setCategories] = useState([]);
   const [menuItems, setMenuItems] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const scrollRef = useRef(null);
+
+  const imageUrlMap = {
+
+    'combo mot minh an ngon': 'https://jollibee.com.vn/media/catalog/product/cache/9011257231b13517d19d9bae81fd87cc/c/a/cap_doi_an_y_78k_1g1m-compressed.jpg',
+    'combo cap doi an y 1': 'https://jollibee.com.vn/media/catalog/product/cache/9011257231b13517d19d9bae81fd87cc/c/a/cap_doi_an_y__2g2m-compressed.jpg',
+    'combo cap doi an y 2': 'https://jollibee.com.vn/media/catalog/product/cache/9011257231b13517d19d9bae81fd87cc/c/a/cap_doi_an_y_145k_3g1m-compressed.jpg',
+    'combo ca nha no ne': 'https://jollibee.com.vn/media/catalog/product/cache/9011257231b13517d19d9bae81fd87cc/c/a/cap_doi_an_y_185k_3g2m-compressed.jpg',
+
+    '1 mieng ga gion': 'https://jollibee.com.vn/media/catalog/product/cache/9011257231b13517d19d9bae81fd87cc/g/_/g_gi_n_vui_v_-_8_1_1.png',
+    '2 mieng ga gion': 'https://jollibee.com.vn/media/catalog/product/cache/9011257231b13517d19d9bae81fd87cc/g/_/g_gi_n_vui_v_-_6_7_2.png',
+    '4 mieng ga gion': 'https://jollibee.com.vn/media/catalog/product/cache/9011257231b13517d19d9bae81fd87cc/g/_/g_gi_n_vui_v_-_6_7_2_1.png',
+    '6 mieng ga gion': 'https://jollibee.com.vn/media/catalog/product/cache/9011257231b13517d19d9bae81fd87cc/g/_/g_gi_n_vui_v_-_1_1.png',
+    '2 ga khoai nuoc': 'https://jollibee.com.vn/media/catalog/product/cache/9011257231b13517d19d9bae81fd87cc/g/_/g_gi_n_vui_v_-_2.png',
+    'com ga sup nuoc': 'https://jollibee.com.vn/media/catalog/product/cache/9011257231b13517d19d9bae81fd87cc/g/_/g_gi_n_vui_v_-_3.png',
+    '1 ga khoai nuoc': 'https://jollibee.com.vn/media/catalog/product/cache/9011257231b13517d19d9bae81fd87cc/g/_/g_gi_n_vui_v_-_4.png',
+    
+    'my y sot bo bam vua': 'https://jollibee.com.vn/media/catalog/product/cache/9011257231b13517d19d9bae81fd87cc/m/_/m_jolly_-_1-compressed.jpg',
+    'my y sot bo bam lon': 'https://jollibee.com.vn/media/catalog/product/cache/9011257231b13517d19d9bae81fd87cc/m/_/m_jolly_-_2-compressed.jpg',
+    'ga my y nuoc': 'https://jollibee.com.vn/media/catalog/product/cache/9011257231b13517d19d9bae81fd87cc/m/_/m_jolly_-_3.png',
+    'my lon 2 ga xl khoai nuoc': 'https://jollibee.com.vn/media/catalog/product/cache/9011257231b13517d19d9bae81fd87cc/m/_/m_jolly_-_4-compressed_1.jpg',
+    'my lon 2 ga xl nuoc': 'https://jollibee.com.vn/media/catalog/product/cache/9011257231b13517d19d9bae81fd87cc/m/_/m_jolly_-_5-compressed_1.jpg',
+    
+    'com ga sot cay': 'https://jollibee.com.vn/media/catalog/product/cache/9011257231b13517d19d9bae81fd87cc/g/_/g_s_t_cay_-_6-compressed_1.jpg',
+    '2 mieng ga sot cay': 'https://jollibee.com.vn/media/catalog/product/cache/9011257231b13517d19d9bae81fd87cc/g/_/g_s_t_cay_-_1-compressed.jpg',
+    '2 ga cay khoai nuoc': 'https://jollibee.com.vn/media/catalog/product/cache/9011257231b13517d19d9bae81fd87cc/g/_/g_s_t_cay_-_2-compressed.jpg',
+    'com ga cay nuoc': 'https://jollibee.com.vn/media/catalog/product/cache/9011257231b13517d19d9bae81fd87cc/g/_/g_s_t_cay_-_3-compressed.jpg',
+    'com ga cay sup nuoc': 'https://jollibee.com.vn/media/catalog/product/cache/9011257231b13517d19d9bae81fd87cc/g/_/g_s_t_cay_-_4-compressed.jpg',
+    '1 ga cay khoai nuoc': 'https://jollibee.com.vn/media/catalog/product/cache/9011257231b13517d19d9bae81fd87cc/g/_/g_s_t_cay_-_5-compressed.jpg',
+    '1 mieng ga sot cay': 'https://jollibee.com.vn/media/catalog/product/cache/9011257231b13517d19d9bae81fd87cc/g/_/g_s_t_cay_-_7-compressed.jpg',
+    
+    'burger ga gion nuoc': 'https://jollibee.com.vn/media/catalog/product/cache/9011257231b13517d19d9bae81fd87cc/b/u/burger_-_1.png',
+    'burger bbq khoai nuoc': 'https://jollibee.com.vn/media/catalog/product/cache/9011257231b13517d19d9bae81fd87cc/b/u/burger_-_2.png',
+    'burger bbq nuoc': 'https://jollibee.com.vn/media/catalog/product/cache/9011257231b13517d19d9bae81fd87cc/b/u/burger_-_3.png',
+    'burger bbq': 'https://jollibee.com.vn/media/catalog/product/cache/9011257231b13517d19d9bae81fd87cc/b/u/burger_-_4.png',
+    'burger ga gion': 'https://jollibee.com.vn/media/catalog/product/cache/9011257231b13517d19d9bae81fd87cc/b/u/burger_-_5.png',
+    'burger ga gion khoai nuoc': 'https://jollibee.com.vn/media/catalog/product/cache/9011257231b13517d19d9bae81fd87cc/b/u/burger_-_6.png',
+    
+    'khoai tay chien lon': 'https://jollibee.com.vn/media/catalog/product/cache/9011257231b13517d19d9bae81fd87cc/p/h/ph_n_n_ph_-_1_2-compressed_1_1.jpg',
+    'khoai vien rong bien': 'https://jollibee.com.vn/media/catalog/product/cache/9011257231b13517d19d9bae81fd87cc/p/h/ph_n_n_ph_-_3_4-compressed_1.jpg',
+    'canh ga sot tieu': 'https://jollibee.com.vn/media/catalog/product/cache/9011257231b13517d19d9bae81fd87cc/p/h/ph_n_n_ph_-_5.png',
+    'khoai tay chien vua': 'https://jollibee.com.vn/media/catalog/product/cache/9011257231b13517d19d9bae81fd87cc/p/h/ph_n_n_ph_-_6.png',
+    
+    'banh xoai dao': 'https://jollibee.com.vn/media/catalog/product/cache/9011257231b13517d19d9bae81fd87cc/m/_/m_n_tr_ng_mi_ng_-_1.png',
+    'tropical sundae': 'https://jollibee.com.vn/media/catalog/product/cache/9011257231b13517d19d9bae81fd87cc/m/_/m_n_tr_ng_mi_ng_-_2.png',
+    'banh pie nhan khoai mon': 'https://jollibee.com.vn/media/catalog/product/cache/9011257231b13517d19d9bae81fd87cc/m/_/m_n_tr_ng_mi_ng_-_3.png',
+    'kem sua tuoi': 'https://jollibee.com.vn/media/catalog/product/cache/9011257231b13517d19d9bae81fd87cc/m/_/m_n_tr_ng_mi_ng_-_4.png',
+    'kem socola': 'https://jollibee.com.vn/media/catalog/product/cache/9011257231b13517d19d9bae81fd87cc/m/_/m_n_tr_ng_mi_ng_-_5.png',
+    'kem sundae dau': 'https://jollibee.com.vn/media/catalog/product/cache/9011257231b13517d19d9bae81fd87cc/m/_/m_n_tr_ng_mi_ng_-_6.png',
+    
+    'pepsi vua': 'https://jollibee.com.vn/media/catalog/product/cache/9011257231b13517d19d9bae81fd87cc/t/h/th_c_u_ng_-_1.png',
+    '7up vua': 'https://jollibee.com.vn/media/catalog/product/cache/9011257231b13517d19d9bae81fd87cc/t/h/th_c_u_ng_-_5_6_1.png',
+    'mirinda vua': 'https://jollibee.com.vn/media/catalog/product/cache/9011257231b13517d19d9bae81fd87cc/t/h/th_c_u_ng_-_7_8_1.png',
+    'pepsi lon': 'https://jollibee.com.vn/media/catalog/product/cache/9011257231b13517d19d9bae81fd87cc/t/h/th_c_u_ng_-_9_10_1.png',
+    '7up lon': 'https://jollibee.com.vn/media/catalog/product/cache/9011257231b13517d19d9bae81fd87cc/t/h/th_c_u_ng_-_11_12_1.png'
+  };
 
   useEffect(() => {
     let isMounted = true;
@@ -55,12 +119,17 @@ function MenuPage() {
   const activeItems = useMemo(
     () => menuItems
       .filter((item) => item.categoryId === activeCategory)
-      .map((item) => ({
-        ...item,
-        price: formatVnd(item.price),
-        parsedPrice: Number(item.price),
-        image: item.imageUrl || '',
-      })),
+      .map((item) => {
+        const normalizedName = normalizeItemName(item.name);
+        const mappedImageUrl = imageUrlMap[normalizedName];
+        
+        return {
+          ...item,
+          price: formatVnd(item.price),
+          parsedPrice: Number(item.price),
+          image: item.imageUrl || mappedImageUrl || '',
+        };
+      }),
     [activeCategory, menuItems]
   );
 
