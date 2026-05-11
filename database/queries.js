@@ -277,12 +277,26 @@ export async function createOrder(payload) {
     const discountAmount = Number(payload.discountAmount || 0);
     const totalAmount = Math.max(0, subtotalAmount - discountAmount);
 
+    // allocate per-store sequential number in a transaction-safe way
+    await connection.query(
+      `INSERT INTO order_sequences (store_id, last_number) VALUES (?, 1)
+       ON DUPLICATE KEY UPDATE last_number = last_number + 1`,
+      [storeId]
+    );
+
+    const [seqRows] = await connection.query(
+      `SELECT last_number FROM order_sequences WHERE store_id = ? LIMIT 1`,
+      [storeId]
+    );
+
+    const storeOrderNumber = seqRows && seqRows[0] ? Number(seqRows[0].last_number) : null;
+
     const [orderResult] = await connection.query(
       `INSERT INTO orders (
-        user_id, store_id, customer_name, customer_email, customer_phone, promotion_code,
+        store_order_number, user_id, store_id, customer_name, customer_email, customer_phone, promotion_code,
         notes, subtotal_amount, discount_amount, total_amount, status
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'pending')`,
-      [userId, storeId, customerName, customerEmail, customerPhone, promotionCode, notes, subtotalAmount, discountAmount, totalAmount]
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'pending')`,
+      [storeOrderNumber, userId, storeId, customerName, customerEmail, customerPhone, promotionCode, notes, subtotalAmount, discountAmount, totalAmount]
     );
 
     const orderId = orderResult.insertId;
@@ -303,7 +317,7 @@ export async function createOrder(payload) {
     }
 
     await connection.commit();
-    return orderId;
+    return { orderId, storeOrderNumber };
   } catch (error) {
     await connection.rollback();
     throw error;
@@ -351,7 +365,7 @@ export async function getOrdersForStore(storeId) {
   const db = getDatabasePool();
   const [orders] = await db.query(
     `SELECT id, user_id, store_id, customer_name, customer_email, customer_phone, promotion_code,
-            notes, subtotal_amount, discount_amount, total_amount, status, created_at, updated_at
+            store_order_number, notes, subtotal_amount, discount_amount, total_amount, status, created_at, updated_at
      FROM orders
      WHERE store_id = ?
      ORDER BY created_at DESC, id DESC`,
@@ -405,7 +419,7 @@ export async function getOrdersForCustomer({ userId = null, customerEmail = '' }
 
   const [orders] = await db.query(
     `SELECT id, user_id, store_id, customer_name, customer_email, customer_phone, promotion_code,
-            notes, subtotal_amount, discount_amount, total_amount, status, created_at, updated_at
+            store_order_number, notes, subtotal_amount, discount_amount, total_amount, status, created_at, updated_at
      FROM orders
      WHERE ${conditions.length > 1 ? `(${conditions.join(' OR ')})` : conditions[0]}
      ORDER BY created_at DESC, id DESC`,
