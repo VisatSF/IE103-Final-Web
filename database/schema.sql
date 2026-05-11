@@ -183,6 +183,8 @@ CREATE TABLE IF NOT EXISTS promotion_usages (
   KEY idx_promotion_usages_promotion_id (promotion_id),
   KEY idx_promotion_usages_user_id (user_id),
   KEY idx_promotion_usages_order_id (order_id),
+  KEY idx_promotion_usages_customer_email (customer_email),
+  KEY idx_promotion_usages_promotion_user (promotion_id, user_id),
   CONSTRAINT fk_promotion_usages_promotion_id
     FOREIGN KEY (promotion_id) REFERENCES promotions (id)
     ON DELETE CASCADE
@@ -192,7 +194,6 @@ CREATE TABLE IF NOT EXISTS promotion_usages (
     ON DELETE SET NULL
     ON UPDATE CASCADE
 );
-
 CREATE TABLE IF NOT EXISTS store_settings (
   id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
   store_id BIGINT UNSIGNED NOT NULL,
@@ -266,7 +267,9 @@ CREATE TABLE IF NOT EXISTS orders (
   PRIMARY KEY (id),
   KEY idx_orders_user_id (user_id),
   KEY idx_orders_store_id (store_id),
+  KEY idx_orders_customer_email (customer_email),
   KEY idx_orders_status_created_at (status, created_at),
+  KEY idx_orders_status_customer_email (status, customer_email),
   UNIQUE KEY uq_store_order_number (store_id, store_order_number),
   CONSTRAINT fk_orders_user_id
     FOREIGN KEY (user_id) REFERENCES users (id)
