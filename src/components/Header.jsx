@@ -34,6 +34,20 @@ function Header() {
     { label: 'TUYỂN DỤNG', path: '/careers' }
   ];
 
+  const storeNavItems = [
+    { label: 'TRANG CHỦ', path: '/' },
+    { label: 'VỀ JOBILLEE', path: '/about' },
+    { label: 'THỰC ĐƠN', path: '/menu' },
+    { label: 'KHUYẾN MÃI', path: '/promotions' },
+    { label: 'DỊCH VỤ', path: '/services' },
+    { label: 'TIN TỨC', path: '/news' },
+    { label: 'CỬA HÀNG', path: '/store' },
+    { label: 'LIÊN HỆ', path: '/contact' },
+    { label: 'TUYỂN DỤNG', path: '/careers' }
+  ];
+
+  const visibleNavItems = user?.role === 'store_manager' ? storeNavItems : navItems;
+
   const isActive = (path) => location.pathname === path;
 
   const handleLogout = () => {
@@ -53,7 +67,7 @@ function Header() {
 
           {/* Desktop Navigation */}
           <nav className="hidden lg:flex items-center justify-center flex-1 mx-4 gap-1">
-            {navItems.map((item) => (
+            {visibleNavItems.map((item) => (
               <Link
                 key={item.path}
                 to={item.path}
@@ -135,7 +149,7 @@ function Header() {
         {/* Mobile Navigation Dropdown */}
         {mobileMenuOpen && (
           <nav className="lg:hidden pb-6 space-y-1">
-            {navItems.map((item) => (
+            {visibleNavItems.map((item) => (
               <Link
                 key={item.path}
                 to={item.path}
