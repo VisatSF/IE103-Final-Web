@@ -26,6 +26,39 @@ function calculateDiscount(promotion, subtotalAmount) {
   return Math.min(subtotalAmount, Number(promotion.discountValue));
 }
 
+function normalizeText(value = '') {
+  return String(value)
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase()
+    .trim();
+}
+
+function getPromotionValidationMessage(promotion, cartItems, now = new Date()) {
+  if (!promotion) {
+    return '';
+  }
+
+  const promoCode = String(promotion.code || '').trim().toUpperCase();
+  const normalizedNames = (cartItems || []).map((item) => normalizeText(item.name ?? ''));
+
+  if (promoCode === 'FAMILY30') {
+    const eligible = normalizedNames.length > 0 && normalizedNames.every((name) => name.includes('combo gia dinh'));
+    return eligible ? '' : 'Mã FAMILY30 chỉ áp dụng cho Combo Gia Đình.';
+  }
+
+  if (promoCode === 'CHICKEN2FOR1') {
+    const eligible = normalizedNames.length > 0 && normalizedNames.every((name) => name.includes('ga gion vui ve (2 mieng)'));
+    return eligible ? '' : 'Mã CHICKEN2FOR1 chỉ áp dụng cho Gà Giòn Vui Vẻ (2 miếng).';
+  }
+
+  if (promoCode === 'MONDAY20') {
+    return now.getDay() === 1 ? '' : 'Mã MONDAY20 chỉ áp dụng vào thứ 2.';
+  }
+
+  return '';
+}
+
 export default function OrderPage() {
   const navigate = useNavigate();
   const { cart, totalPrice, clearCart } = useCart();
@@ -97,10 +130,37 @@ export default function OrderPage() {
   }, [user]);
 
   const discountAmount = useMemo(
-    () => calculateDiscount(appliedPromotion, totalPrice),
-    [appliedPromotion, totalPrice]
+    () => {
+      if (!appliedPromotion) {
+        return 0;
+      }
+
+      const validationMessage = getPromotionValidationMessage(appliedPromotion, cart);
+      if (validationMessage) {
+        return 0;
+      }
+
+      return calculateDiscount(appliedPromotion, totalPrice);
+    },
+    [appliedPromotion, cart, totalPrice]
+  );
+  const applicablePromotions = useMemo(
+    () => availablePromotions.filter((promotion) => !getPromotionValidationMessage(promotion, cart)),
+    [availablePromotions, cart]
   );
   const finalTotal = Math.max(0, totalPrice - discountAmount);
+
+  useEffect(() => {
+    if (!appliedPromotion) {
+      return;
+    }
+
+    const validationMessage = getPromotionValidationMessage(appliedPromotion, cart);
+    if (validationMessage) {
+      setAppliedPromotion(null);
+      setPromotionCodeInput('');
+    }
+  }, [appliedPromotion, cart]);
 
   const handleApplyPromotion = (code = promotionCodeInput) => {
     const normalizedCode = code.trim().toUpperCase();
@@ -112,6 +172,12 @@ export default function OrderPage() {
     const matchedPromotion = availablePromotions.find((promotion) => promotion.code === normalizedCode);
     if (!matchedPromotion) {
       toast.error('Mã khuyến mãi không hợp lệ hoặc đã được sử dụng.');
+      return;
+    }
+
+    const validationMessage = getPromotionValidationMessage(matchedPromotion, cart);
+    if (validationMessage) {
+      toast.error(validationMessage);
       return;
     }
 
@@ -216,7 +282,7 @@ export default function OrderPage() {
                   <span>{formatPrice(completedOrder.subtotalAmount)}đ</span>
                 </div>
                 <div className="flex justify-between text-muted-foreground">
-                  <span>Giảm giá</span>
+                  <span>Giá đã giảm</span>
                   <span>{formatPrice(completedOrder.discountAmount || 0)}đ</span>
                 </div>
                 <div className="flex justify-between items-center pt-4 border-t mt-4">
@@ -325,7 +391,7 @@ export default function OrderPage() {
                   <div className="mt-4">
                     <p className="text-sm font-semibold text-[rgb(var(--jobillee-dark))]">Mã hiện có cho bạn</p>
                     <div className="mt-2 flex flex-wrap gap-2">
-                      {availablePromotions.map((promotion) => (
+                      {applicablePromotions.map((promotion) => (
                         <button
                           key={promotion.code}
                           type="button"
@@ -335,8 +401,8 @@ export default function OrderPage() {
                           {promotion.code}
                         </button>
                       ))}
-                      {availablePromotions.length === 0 ? (
-                        <p className="text-sm text-gray-500">Không có mã khuyến mãi khả dụng.</p>
+                      {applicablePromotions.length === 0 ? (
+                        <p className="text-sm text-gray-500">Không có mã khuyến mãi phù hợp với đơn hàng hiện tại.</p>
                       ) : null}
                     </div>
                   </div>
@@ -367,7 +433,7 @@ export default function OrderPage() {
                   <span>{formatPrice(totalPrice)}đ</span>
                 </div>
                 <div className="flex justify-between text-muted-foreground">
-                  <span>Giảm giá</span>
+                  <span>Giá đã giảm</span>
                   <span>{formatPrice(discountAmount)}đ</span>
                 </div>
                 <div className="flex justify-between items-center pt-4 border-t mt-4">
