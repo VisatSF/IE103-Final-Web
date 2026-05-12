@@ -14,6 +14,7 @@ import {
   getMenuCategories,
   getOrdersForStore,
   getOrdersForCustomer,
+  getOrderStatus,
   getPromotionByCode,
   getStoreById,
   getStoreCleanupSettings,
@@ -488,6 +489,30 @@ app.get('/api/store/dashboard/:storeId', async (request, response) => {
         updatedAt: order.updated_at,
         items: order.items,
       })),
+    });
+  } catch (error) {
+    response.status(500).json({ message: error.message });
+  }
+});
+
+app.get('/api/orders/:orderId/status', async (request, response) => {
+  try {
+    const orderId = Number(request.params.orderId);
+    if (!orderId) {
+      return response.status(400).json({ message: 'OrderId không hợp lệ.' });
+    }
+
+    const status = await getOrderStatus(orderId);
+
+    if (!status) {
+      return response.status(404).json({ message: 'Đơn hàng không tìm thấy.' });
+    }
+
+    response.json({
+      orderId: status.orderId,
+      status: status.status,
+      storeId: status.storeId,
+      storeIsActive: status.storeIsActive,
     });
   } catch (error) {
     response.status(500).json({ message: error.message });
