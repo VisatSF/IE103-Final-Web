@@ -5,21 +5,21 @@ import Footer from '@/components/Footer';
 
 function CookiesPage() {
   const sections = [
-    'Cookie giup website ghi nho tuy chon co ban nhu ngon ngu, phien lam viec va mot so hanh vi su dung.',
-    'Mot so cookie phuc vu phan tich hieu suat de doi ngu cai thien toc do va trai nghiem nguoi dung.',
-    'Ban co the tu quan ly hoac xoa cookie trong trinh duyet, nhung mot so tinh nang co the bi anh huong.',
-    'Tiep tuc su dung website co the duoc hieu la ban dong y voi cach su dung cookie theo chinh sach nay.'
+    'Cookie giúp website ghi nhớ tuỳ chọn cơ bản như ngôn ngữ, phiên làm việc và một số hành vi sử dụng.',
+    'Một số cookie phục vụ phân tích hiệu suất để đội ngũ cải thiện tốc độ và trải nghiệm người dùng.',
+    'Bạn có thể tự quản lý hoặc xóa cookie trong trình duyệt, nhưng một số tính năng có thể bị ảnh hưởng.',
+    'Tiếp tục sử dụng website có thể được hiểu là bạn đồng ý với cách sử dụng cookie theo chính sách này.'
   ];
 
   return (
     <>
-      <Helmet>
-        <title>Chinh sach Cookie - Jobillee Vietnam</title>
-        <meta
-          name="description"
-          content="Thong tin ve viec su dung cookie tren website Jobillee Vietnam."
-        />
-      </Helmet>
+        <Helmet>
+          <title>Chính sách Cookie - Jobillee Vietnam</title>
+          <meta
+            name="description"
+            content="Thông tin về việc sử dụng cookie trên website Jobillee Vietnam."
+          />
+        </Helmet>
 
       <Header />
 
@@ -29,9 +29,9 @@ function CookiesPage() {
           <div className="relative h-full max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center">
             <div className="text-[rgb(var(--jobillee-dark))]">
               <h1 className="text-5xl md:text-6xl font-bold mb-4" style={{ fontFamily: 'Outfit, sans-serif' }}>
-                CHINH SACH COOKIE
+                CHÍNH SÁCH COOKIE
               </h1>
-              <p className="text-xl md:text-2xl">Thong tin ve du lieu trinh duyet duoc luu tren website</p>
+              <p className="text-xl md:text-2xl">Thông tin về dữ liệu trình duyệt được lưu trên website</p>
             </div>
           </div>
         </section>
