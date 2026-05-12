@@ -147,7 +147,7 @@ function MenuPage() {
         <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-12">
           {isLoading ? (
             <div className="rounded-2xl bg-white p-8 text-center text-gray-600 shadow-md">
-              Đang tải thực đơn từ MySQL...
+              Đang tải thực đơn...
             </div>
           ) : (
             <AnimatePresence mode="wait">
