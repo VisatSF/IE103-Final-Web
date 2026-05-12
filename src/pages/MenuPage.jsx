@@ -13,14 +13,14 @@ function formatVnd(amount) {
 }
 
 const fallbackImageByCategory = {
-  'combo-ban-chay': 'https://jollibee.com.vn/media/catalog/product/cache/9011257231b13517d19d9bae81fd87cc/c/a/cap_doi_an_y_185k_3g2m-compressed.jpg',
-  'ga-gion': 'https://jollibee.com.vn/media/catalog/product/cache/9011257231b13517d19d9bae81fd87cc/g/_/g_gi_n_vui_v_-_6_7_2.png',
-  'my-y': 'https://jollibee.com.vn/media/catalog/product/cache/9011257231b13517d19d9bae81fd87cc/m/_/m_jolly_-_1-compressed.jpg',
-  'ga-cay': 'https://jollibee.com.vn/media/catalog/product/cache/9011257231b13517d19d9bae81fd87cc/g/_/g_s_t_cay_-_6-compressed_1.jpg',
-  burger: 'https://jollibee.com.vn/media/catalog/product/cache/9011257231b13517d19d9bae81fd87cc/b/u/burger_-_5.png',
-  'an-phu': 'https://jollibee.com.vn/media/catalog/product/cache/9011257231b13517d19d9bae81fd87cc/p/h/ph_n_n_ph_-_1_2-compressed_1_1.jpg',
-  'trang-mieng': 'https://jollibee.com.vn/media/catalog/product/cache/9011257231b13517d19d9bae81fd87cc/m/_/m_n_tr_ng_mi_ng_-_6.png',
-  'thuc-uong': 'https://jollibee.com.vn/media/catalog/product/cache/9011257231b13517d19d9bae81fd87cc/t/h/th_c_u_ng_-_1.png',
+  'combo-ban-chay': '/combo-ca-nha-no-ne.jpg',
+  'ga-gion': '/1-mieng-ga-gion.webp',
+  'my-y': '/my-y-sot-bo-bam-vua.jpg',
+  'ga-cay': '/com-ga-sot-cay.jpg',
+  burger: '/burger-ga-gion.webp',
+  'an-phu': '/khoai-tay-chien-lon.jpg',
+  'trang-mieng': '/tropical-sundae.webp',
+  'thuc-uong': '/pepsi-vua.webp',
 };
 
 function MenuPage() {
