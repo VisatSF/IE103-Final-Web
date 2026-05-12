@@ -33,7 +33,11 @@ function StoresPage() {
 
         setCities(nextCities || []);
         setDistricts(nextDistricts || []);
-        setStores(nextStores || []);
+
+        const uniqueStores = Array.from(
+          new Map((nextStores || []).map((store) => [store.id, store])).values()
+        );
+        setStores(uniqueStores);
       } catch (error) {
         if (isMounted) {
           toast.error(error.message);
