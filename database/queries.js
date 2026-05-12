@@ -204,6 +204,19 @@ export async function getOrdersForCustomer({ userId = null, customerEmail = '' }
   return normalizeOrderRows(getProcedureRows(resultSets));
 }
 
+export async function getOrderStatus(orderId) {
+  const resultSets = await callProcedure('sp_get_order_status', [orderId]);
+  const rows = getProcedureRows(resultSets);
+  const r = rows[0];
+  if (!r) return null;
+  return {
+    orderId: Number(r.order_id),
+    status: r.order_status,
+    storeId: r.store_id ? Number(r.store_id) : null,
+    storeIsActive: Boolean(r.store_is_active),
+  };
+}
+
 export async function updateOrderStatus(orderId, status) {
   await callProcedure('sp_update_order_status', [orderId, status]);
 }
