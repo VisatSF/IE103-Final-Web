@@ -235,6 +235,12 @@ export default function OrderPage() {
         items: cart,
         createdAt: new Date().toLocaleString('vi-VN'),
       });
+
+      try {
+        sessionStorage.setItem('jobillee_last_order', JSON.stringify({ orderId: result.orderId, storeId: Number(formData.storeId) }));
+      } catch (e) {
+
+      }
       clearCart();
       toast.success(`Đặt đơn thành công. Mã đơn #${result.orderId}.`);
     } catch (error) {
@@ -260,7 +266,7 @@ export default function OrderPage() {
                 <CheckCircle2 className="w-10 h-10 text-green-600" />
               </div>
               <h1 className="text-3xl font-bold text-primary mb-2">Đặt hàng thành công!</h1>
-              <p className="text-muted-foreground mb-6">Đơn hàng đã được ghi vào hệ thống MySQL.</p>
+              <p className="text-muted-foreground mb-6">Đơn hàng đã được ghi vào hệ thống.</p>
 
               <div className="flex flex-wrap justify-center gap-6 text-sm text-muted-foreground bg-muted/30 p-4 rounded-xl">
                 <div>
