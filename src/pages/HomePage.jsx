@@ -15,27 +15,27 @@ function HomePage() {
 
   const menuProducts = [
     {
-      image: 'https://jollibee.com.vn/media/catalog/product/cache/9011257231b13517d19d9bae81fd87cc/g/_/g_gi_n_vui_v_-_8_1_1.png',
-      title: 'Gà Giòn Vui Vẻ',
-      description: 'Lớp vỏ giòn tan, thịt bên trong mọng nước, tẩm ướp đậm đà.',
+      image: 'https://jollibee.com.vn/media/catalog/product/cache/9011257231b13517d19d9bae81fd87cc/c/a/cap_doi_an_y_78k_1g1m-compressed.jpg',
+      title: 'Combo Một Mình Ăn Ngon',
+      description: '1 miếng gà giòn + 1 mì ý sốt bò bằm, gọn gàng và no đủ.',
       buttonText: 'ĐẶT NGAY'
     },
     {
       image: 'https://jollibee.com.vn/media/catalog/product/cache/9011257231b13517d19d9bae81fd87cc/g/_/g_s_t_cay_-_6-compressed_1.jpg',
-      title: 'Gà Sốt Cay',
-      description: 'Vị cay nồng đặc trưng quyện cùng sốt sánh mịn khó cưỡng.',
+      title: 'Cơm gà sốt cay',
+      description: '1 miếng gà sốt cay + cơm nóng, đậm vị và dễ ăn.',
       buttonText: 'ĐẶT NGAY'
     },
     {
-      image: 'https://jollibee.com.vn/media/catalog/product/cache/9011257231b13517d19d9bae81fd87cc/m/_/m_jolly_-_2-compressed.jpg',
-      title: 'Mỳ Ý Sốt Bò Bằm',
-      description: 'Mỳ Ý dai ngon kết hợp xốt bò bằm và xúc xích thơm lừng.',
+      image: 'https://jollibee.com.vn/media/catalog/product/cache/9011257231b13517d19d9bae81fd87cc/m/_/m_jolly_-_1-compressed.jpg',
+      title: 'Mỳ Ý sốt bò bằm (Vừa)',
+      description: 'Mỳ Ý sốt bò bằm cỡ vừa, hợp cho bữa trưa nhanh gọn.',
       buttonText: 'ĐẶT NGAY'
     },
     {
       image: 'https://jollibee.com.vn/media/catalog/product/cache/9011257231b13517d19d9bae81fd87cc/m/_/m_n_tr_ng_mi_ng_-_1.png',
-      title: 'Bánh Xoài Đào',
-      description: 'Tráng miệng ngọt ngào, mát lạnh xua tan cái nóng.',
+      title: 'Bánh xoài đào',
+      description: 'Tráng miệng ngọt mát, cân bằng vị cho bữa ăn.',
       buttonText: 'ĐẶT NGAY'
     }
   ];
