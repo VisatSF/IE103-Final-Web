@@ -21,7 +21,6 @@ export function CartProvider({ children }) {
     sessionStorage.setItem('jobillee_cart', JSON.stringify(cart));
   }, [cart]);
 
-  // Utility to parse price strings like "30k" or "78,000 VND" to numbers
   const parsePrice = (priceStr) => {
     if (!priceStr) return 0;
     const str = priceStr.toString().toLowerCase().replace(/,/g, '').replace(/\./g, '').trim();
@@ -48,7 +47,7 @@ export function CartProvider({ children }) {
           ...item,
           id: Math.random().toString(36).substr(2, 9),
           quantity: 1,
-          parsedPrice: parsePrice(item.price)
+          parsedPrice: item.parsedPrice ?? parsePrice(item.price)
         }
       ];
     });
