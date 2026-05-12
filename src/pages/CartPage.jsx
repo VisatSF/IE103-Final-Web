@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Helmet } from 'react-helmet';
 import { Link, useNavigate } from 'react-router-dom';
-import { Trash2, Plus, Minus, ArrowLeft, ShoppingBag } from 'lucide-react';
+import { Trash2, Plus, Minus, ArrowLeft, ShoppingBag, Clock, CheckCircle2, AlertCircle } from 'lucide-react';
 import Header from '@/components/Header.jsx';
 import Footer from '@/components/Footer.jsx';
 import { Button } from '@/components/ui/button.jsx';
@@ -14,14 +14,18 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog.jsx';
 import { useCart } from '@/contexts/CartContext.jsx';
+import { useAuth } from '@/contexts/AuthContext.jsx';
 import { formatPrice } from '@/lib/utils.js';
 
 export default function CartPage() {
   const { cart, removeFromCart, updateQuantity, totalPrice } = useCart();
+  const { user } = useAuth();
   const navigate = useNavigate();
   const [itemToDelete, setItemToDelete] = useState(null);
   const [lastOrder, setLastOrder] = useState(null);
   const [orderStatus, setOrderStatus] = useState(null);
+  const [orderHistory, setOrderHistory] = useState([]);
+  const [isLoadingHistory, setIsLoadingHistory] = useState(false);
 
   const handleCheckout = () => {
     navigate('/order', { state: { cart, totalPrice } });
@@ -77,6 +81,42 @@ export default function CartPage() {
       if (pollingId) clearInterval(pollingId);
     };
   }, []);
+
+  React.useEffect(() => {
+    let isMounted = true;
+
+    async function fetchOrderHistory() {
+      try {
+        setIsLoadingHistory(true);
+        const { getUserOrdersApi } = await import('@/lib/api.js');
+        const response = await getUserOrdersApi({
+          userId: user?.id ?? null,
+          email: user?.email || '',
+        });
+
+        if (!isMounted) return;
+
+        const orders = (response.orders || []).sort(
+          (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
+        );
+        setOrderHistory(orders);
+      } catch (err) {
+        // ignore
+      } finally {
+        if (isMounted) {
+          setIsLoadingHistory(false);
+        }
+      }
+    }
+
+    if (user?.id || user?.email) {
+      fetchOrderHistory();
+    }
+
+    return () => {
+      isMounted = false;
+    };
+  }, [user?.id, user?.email]);
 
   const handleMinusClick = (item) => {
     if (item.quantity <= 1) {
@@ -217,6 +257,66 @@ export default function CartPage() {
               </div>
             </div>
           )}
+
+          {orderHistory && orderHistory.length > 0 ? (
+            <div className="mt-12 bg-white rounded-2xl shadow-sm border border-border/50 p-8">
+              <h2 className="text-2xl font-bold mb-6 border-b pb-4" style={{ fontFamily: 'Outfit, sans-serif' }}>Lịch sử đơn hàng</h2>
+              
+              <div className="space-y-4">
+                {orderHistory.map((order) => {
+                  const statusColors = {
+                    pending: 'bg-yellow-50 border-yellow-200',
+                    confirmed: 'bg-blue-50 border-blue-200',
+                    preparing: 'bg-blue-50 border-blue-200',
+                    ready: 'bg-green-50 border-green-200',
+                    completed: 'bg-green-50 border-green-200',
+                    cancelled: 'bg-red-50 border-red-200',
+                  };
+
+                  const statusIcons = {
+                    pending: <Clock className="w-4 h-4 text-yellow-600" />,
+                    confirmed: <Clock className="w-4 h-4 text-blue-600" />,
+                    preparing: <Clock className="w-4 h-4 text-blue-600" />,
+                    ready: <CheckCircle2 className="w-4 h-4 text-green-600" />,
+                    completed: <CheckCircle2 className="w-4 h-4 text-green-600" />,
+                    cancelled: <AlertCircle className="w-4 h-4 text-red-600" />,
+                  };
+
+                  const statusTexts = {
+                    pending: 'Chờ xác nhận',
+                    confirmed: 'Đã xác nhận',
+                    preparing: 'Đang chuẩn bị',
+                    ready: 'Sẵn sàng',
+                    completed: 'Hoàn thành',
+                    cancelled: 'Đã hủy',
+                  };
+
+                  return (
+                    <div key={order.id} className={`p-4 rounded-lg border ${statusColors[order.status] || 'bg-gray-50 border-gray-200'}`}>
+                      <div className="flex items-start justify-between gap-4">
+                        <div className="flex-1">
+                          <div className="flex items-center gap-2 mb-2">
+                            {statusIcons[order.status] || <Clock className="w-4 h-4" />}
+                            <span className="font-medium text-sm">{statusTexts[order.status] || order.status}</span>
+                          </div>
+                          <div className="text-sm font-semibold text-gray-900 mb-1">Mã đơn: #{order.id}</div>
+                          <div className="text-xs text-gray-600 mb-2">
+                            {new Date(order.createdAt).toLocaleString('vi-VN')}
+                          </div>
+                          <div className="text-sm text-gray-700">
+                            <span className="font-medium">{order.items?.length || 0} món</span> - {formatPrice(order.totalAmount)} đ
+                          </div>
+                        </div>
+                        <div className="text-right">
+                          <div className="text-sm font-semibold text-gray-900">{formatPrice(order.totalAmount)} đ</div>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          ) : null}
         </div>
       </main>
 
