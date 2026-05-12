@@ -105,6 +105,10 @@ export function createOrderApi(payload) {
   });
 }
 
+export function getOrderStatusApi(orderId) {
+  return apiRequest(`/api/orders/${encodeURIComponent(orderId)}/status`);
+}
+
 export function getUserOrdersApi({ userId = null, email = '' } = {}) {
   const params = new URLSearchParams();
   if (userId) params.set('userId', String(userId));
