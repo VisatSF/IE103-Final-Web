@@ -1,36 +1,36 @@
 USE jobillee_web;
 
 INSERT INTO cities (id, slug, name) VALUES
-  (1, 'hcm', 'TP. Ho Chi Minh'),
-  (2, 'hn', 'Ha Noi'),
-  (3, 'dn', 'Da Nang'),
-  (4, 'ct', 'Can Tho')
+  (1, 'hcm', 'TP. Hồ Chí Minh'),
+  (2, 'hn', 'Hà Nội'),
+  (3, 'dn', 'Đà Nẵng'),
+  (4, 'ct', 'Cần Thơ')
 ON DUPLICATE KEY UPDATE
   name = VALUES(name),
   is_active = 1;
 
 INSERT INTO districts (id, city_id, slug, name) VALUES
-  (1, 1, 'q1', 'Quan 1'),
-  (2, 1, 'q3', 'Quan 3'),
-  (3, 2, 'hk', 'Hoan Kiem'),
-  (4, 2, 'cg', 'Cau Giay')
+  (1, 1, 'q1', 'Quận 1'),
+  (2, 1, 'q3', 'Quận 3'),
+  (3, 2, 'hk', 'Hoàn Kiếm'),
+  (4, 2, 'cg', 'Cầu Giấy')
 ON DUPLICATE KEY UPDATE
   name = VALUES(name),
   is_active = 1;
 
 INSERT INTO stores (district_id, name, address_line, phone, opening_hours, map_url, is_active) VALUES
-  (1, 'Jobillee Nguyen Hue', '123 Nguyen Hue, Quan 1, TP.HCM', '028-3822-1234', '8:00 - 22:00', NULL, 1),
-  (1, 'Jobillee Le Loi', '65 Le Loi, Quan 1, TP.HCM', '028-3822-5678', '8:00 - 22:00', NULL, 1),
-  (2, 'Jobillee Vo Van Tan', '234 Vo Van Tan, Quan 3, TP.HCM', '028-3933-4567', '8:00 - 22:00', NULL, 1),
-  (3, 'Jobillee Hoan Kiem', '45 Trang Tien, Hoan Kiem, Ha Noi', '024-3826-1234', '8:00 - 22:00', NULL, 1),
-  (4, 'Jobillee Cau Giay', '78 Xuan Thuy, Cau Giay, Ha Noi', '024-3754-5678', '8:00 - 22:00', NULL, 1);
+  (1, 'Jobillee Nguyễn Huệ', '123 Nguyễn Huệ, Quận 1, TP. Hồ Chí Minh', '028-3822-1234', '8:00 - 22:00', NULL, 1),
+  (1, 'Jobillee Lê Lợi', '65 Lê Lợi, Quận 1, TP. Hồ Chí Minh', '028-3822-5678', '8:00 - 22:00', NULL, 1),
+  (2, 'Jobillee Võ Văn Tần', '234 Võ Văn Tần, Quận 3, TP. Hồ Chí Minh', '028-3933-4567', '8:00 - 22:00', NULL, 1),
+  (3, 'Jobillee Hoàn Kiếm', '45 Tràng Tiền, Hoàn Kiếm, Hà Nội', '024-3826-1234', '8:00 - 22:00', NULL, 1),
+  (4, 'Jobillee Cầu Giấy', '78 Xuân Thủy, Cầu Giấy, Hà Nội', '024-3754-5678', '8:00 - 22:00', NULL, 1);
 
 INSERT INTO users (full_name, email, phone, password_hash, role, store_id, status) VALUES
   ('User 1', 'user1@gmail.com', '0901000001', SHA2('User1', 256), 'customer', NULL, 'active'),
   ('User 2', 'user2@gmail.com', '0901000002', SHA2('User2', 256), 'customer', NULL, 'active'),
   ('User 3', 'user3@gmail.com', '0901000003', SHA2('User3', 256), 'customer', NULL, 'active'),
-  ('Quan ly Jobillee Nguyen Hue', 'store1@jobillee.vn', '02838221234', SHA2('Store1', 256), 'store_manager', 1, 'active'),
-  ('Quan ly Jobillee Hoan Kiem', 'store2@jobillee.vn', '02438261234', SHA2('Store2', 256), 'store_manager', 4, 'active')
+  ('Quản lý Jobillee Nguyễn Huệ', 'store1@jobillee.vn', '02838221234', SHA2('Store1', 256), 'store_manager', 1, 'active'),
+  ('Quản lý Jobillee Hoàn Kiếm', 'store2@jobillee.vn', '02438261234', SHA2('Store2', 256), 'store_manager', 4, 'active')
 ON DUPLICATE KEY UPDATE
   full_name = VALUES(full_name),
   phone = VALUES(phone),
@@ -107,12 +107,12 @@ ON DUPLICATE KEY UPDATE
   is_active = 1;
 
 INSERT INTO services (slug, title, description, icon_name, display_order, is_active) VALUES
-  ('pickup', 'LAY TAI CUA HANG', 'Dat hang truoc qua app hoac website, den cua hang lay ngay khong can cho doi.', 'Store', 1, 1),
-  ('delivery', 'GIAO HANG TAN NOI', 'Dich vu giao hang nhanh chong trong vong 30 phut.', 'Truck', 2, 1),
-  ('birthday-party', 'DAT TIEC SINH NHAT', 'To chuc tiec sinh nhat voi thuc don da dang va khong gian vui nhon.', 'PartyPopper', 3, 1),
-  ('kids-club', 'JOBILLEE KIDS CLUB', 'Cau lac bo danh cho tre em voi nhieu hoat dong thu vi.', 'Users', 4, 1),
-  ('bulk-order', 'DON HANG LON', 'Phuc vu don hang lon cho su kien, tiec cong ty va hop mat.', 'ShoppingBag', 5, 1),
-  ('pre-order', 'DAT HANG TRUOC', 'Dat hang truoc de dam bao co mon an yeu thich vao gio cao diem.', 'Clock', 6, 1)
+  ('pickup', 'LẤY TẠI CỬA HÀNG', 'Đặt hàng trước qua app hoặc website, đến cửa hàng lấy ngay không cần chờ đợi.', 'Store', 1, 1),
+  ('delivery', 'GIAO HÀNG TẬN NƠI', 'Dịch vụ giao hàng nhanh chóng trong vòng 30 phút.', 'Truck', 2, 1),
+  ('birthday-party', 'ĐẶT TIỆC SINH NHẬT', 'Tổ chức tiệc sinh nhật với thực đơn đa dạng và không gian vui nhộn.', 'PartyPopper', 3, 1),
+  ('kids-club', 'JOBILLEE KIDS CLUB', 'Câu lạc bộ dành cho trẻ em với nhiều hoạt động thú vị.', 'Users', 4, 1),
+  ('bulk-order', 'ĐƠN HÀNG LỚN', 'Phục vụ đơn hàng lớn cho sự kiện, tiệc công ty và họp mặt.', 'ShoppingBag', 5, 1),
+  ('pre-order', 'ĐẶT HÀNG TRƯỚC', 'Đặt hàng trước để đảm bảo có món ăn yêu thích vào giờ cao điểm.', 'Clock', 6, 1)
 ON DUPLICATE KEY UPDATE
   title = VALUES(title),
   description = VALUES(description),
@@ -121,14 +121,14 @@ ON DUPLICATE KEY UPDATE
   is_active = 1;
 
 INSERT INTO news_posts (slug, title, summary, content, image_url, status, published_at) VALUES
-  ('ra-mat-combo-gia-dinh-moi', 'Ra mat combo gia dinh moi - Tiet kiem hon, ngon hon', 'Jobillee gioi thieu combo gia dinh moi voi gia uu dai dac biet.', 'Bao gom 8 mieng ga ran, 2 phan khoai tay lon, 2 nuoc ngot va 1 mon trang mieng.', 'https://horizons-cdn.hostinger.com/cc77e2b7-31d8-4f71-b490-d96eab13f289/069f4ea5fc086935a53944c08576d803.png', 'published', '2026-04-15 09:00:00'),
-  ('khuyen-mai-thang-4', 'Khuyen mai thang 4 - Giam gia len den 30%', 'Chao mung thang 4, Jobillee danh tang khach hang chuong trinh khuyen mai hap dan.', 'Giam gia len den 30% cho cac combo va mon an yeu thich trong thang 4.', 'https://horizons-cdn.hostinger.com/cc77e2b7-31d8-4f71-b490-d96eab13f289/f08319569cfa954a05cad939a4079a2b.png', 'published', '2026-04-10 09:00:00'),
-  ('khai-truong-cua-hang-thu-50', 'Khai truong cua hang thu 50 tai Ha Noi', 'Jobillee chinh thuc khai truong cua hang thu 50 tai so 123 Duong Lang, Ha Noi.', 'Nhieu uu dai dac biet danh cho khach hang trong tuan khai truong.', 'https://horizons-cdn.hostinger.com/cc77e2b7-31d8-4f71-b490-d96eab13f289/284eca44fa6db807fc3fc627d9657ec5.png', 'published', '2026-04-05 09:00:00'),
-  ('mon-moi-my-y-sot-bo-bam', 'Mon moi: My Y Sot Bo Bam - Huong vi Y dich thuc', 'Kham pha mon my Y sot bo bam moi voi cong thuc dac biet.', 'Ket hop huong vi truyen thong Y va khau vi nguoi Viet.', 'https://horizons-cdn.hostinger.com/cc77e2b7-31d8-4f71-b490-d96eab13f289/0f7a44313a54339ff0ba16dd765eb263.png', 'published', '2026-04-01 09:00:00');
+  ('ra-mat-combo-gia-dinh-moi', 'Ra mắt combo gia đình mới - Tiết kiệm hơn, ngon hơn', 'Jobillee giới thiệu combo gia đình mới với giá ưu đãi đặc biệt.', 'Bao gồm 8 miếng gà rán, 2 phần khoai tây lớn, 2 nước ngọt và 1 món tráng miệng.', 'https://horizons-cdn.hostinger.com/cc77e2b7-31d8-4f71-b490-d96eab13f289/069f4ea5fc086935a53944c08576d803.png', 'published', '2026-04-15 09:00:00'),
+  ('khuyen-mai-thang-4', 'Khuyến mãi tháng 4 - Giảm giá lên đến 30%', 'Chào mừng tháng 4, Jobillee dành tặng khách hàng chương trình khuyến mãi hấp dẫn.', 'Giảm giá lên đến 30% cho các combo và món ăn yêu thích trong tháng 4.', 'https://horizons-cdn.hostinger.com/cc77e2b7-31d8-4f71-b490-d96eab13f289/f08319569cfa954a05cad939a4079a2b.png', 'published', '2026-04-10 09:00:00'),
+  ('khai-truong-cua-hang-thu-50', 'Khai trương cửa hàng thứ 50 tại Hà Nội', 'Jobillee chính thức khai trương cửa hàng thứ 50 tại số 123 Dương Lâng, Hà Nội.', 'Nhiều ưu đãi đặc biệt dành cho khách hàng trong tuần khai trương.', 'https://horizons-cdn.hostinger.com/cc77e2b7-31d8-4f71-b490-d96eab13f289/284eca44fa6db807fc3fc627d9657ec5.png', 'published', '2026-04-05 09:00:00'),
+  ('mon-moi-my-y-sot-bo-bam', 'Món mới: Mỳ Ý Sốt Bò Bằm - Hương vị Ý địch thực', 'Khám phá món mỳ Ý sốt bò bằm mới với công thức đặc biệt.', 'Kết hợp hương vị truyền thống Ý và khẩu vị người Việt.', 'https://horizons-cdn.hostinger.com/cc77e2b7-31d8-4f71-b490-d96eab13f289/0f7a44313a54339ff0ba16dd765eb263.png', 'published', '2026-04-01 09:00:00');
 
 INSERT INTO promotions (title, slug, description, promo_code, discount_type, discount_value, icon_key, valid_from, valid_until, terms, status) VALUES
-  ('Giảm 30% Combo Gia Đình', 'giam-30-combo-gia-dinh', 'Áp dụng cho tất cả combo gia đình từ 4 người trở lên', 'FAMILY30', 'percentage', 30, 'Percent', '2026-04-01', '2026-04-30', 'Mỗi mã khuyến mãi chỉ được sử dụng một lần cho mỗi đơn hàng.', 'active'),
-  ('Mua 1 Tặng 1 Gà Rán', 'mua-1-tang-1-ga-ran', 'Mua 2 miếng gà rán tặng thêm 1 miếng cùng loại', 'CHICKEN2FOR1', 'fixed', 25000, 'Gift', '2026-04-01', '2026-04-25', 'Không áp dụng đồng thời nhiều chương trình khuyến mãi.', 'active'),
+  ('Giảm 30% Combo Gia Đình', 'giam-30-combo-gia-dinh', 'Áp dụng cho tất cả combo gia đình từ 4 người trở lên', 'FAMILY30', 'percentage', 30, 'Percent', '2026-04-01', '2026-05-30', 'Mỗi mã khuyến mãi chỉ được sử dụng một lần cho mỗi đơn hàng.', 'active'),
+  ('Mua 2 Tặng 1 Gà Rán', 'mua-2-tang-1-ga-ran', 'Mua 2 miếng gà rán tặng thêm 1 miếng cùng loại', 'CHICKEN2FOR1', 'fixed', 25000, 'Gift', '2026-04-01', '2026-05-25', 'Không áp dụng đồng thời nhiều chương trình khuyến mãi.', 'active'),
   ('Combo Sinh Viên 39K', 'combo-sinh-vien-39k', 'Giảm ngay cho đơn hàng sinh viên hợp lệ', 'STUDENT39', 'fixed', 39000, 'Star', '2026-04-01', '2026-05-31', 'Áp dụng tại cửa hàng tham gia chương trình.', 'active'),
   ('Thứ 2 Vui Vẻ', 'thu-2-vui-ve', 'Giảm 20% tất cả đơn hàng vào thứ 2 hàng tuần', 'MONDAY20', 'percentage', 20, 'Calendar', '2026-01-01', '2026-12-31', 'Áp dụng cho đơn hàng hợp lệ trong năm 2026.', 'active')
 ON DUPLICATE KEY UPDATE
@@ -149,12 +149,12 @@ ON DUPLICATE KEY UPDATE
   auto_clear_period = VALUES(auto_clear_period);
 
 INSERT INTO job_openings (title, slug, location_text, employment_type, salary_min, salary_max, salary_text, description, status) VALUES
-  ('Nhan vien phuc vu', 'nhan-vien-phuc-vu', 'TP.HCM - Nhieu vi tri', 'Toan thoi gian', 7000000, 9000000, '7-9 trieu/thang', 'Phuc vu khach hang, dam bao chat luong dich vu tot nhat', 'open'),
-  ('Dau bep', 'dau-bep', 'Ha Noi', 'Toan thoi gian', 12000000, 18000000, '12-18 trieu/thang', 'Che bien mon an theo tieu chuan, dam bao ve sinh an toan thuc pham', 'open'),
-  ('Quan ly cua hang', 'quan-ly-cua-hang', 'Da Nang', 'Toan thoi gian', 15000000, 22000000, '15-22 trieu/thang', 'Quan ly van hanh cua hang, dao tao va phat trien doi ngu', 'open'),
-  ('Nhan vien giao hang', 'nhan-vien-giao-hang', 'TP.HCM', 'Ban thoi gian', 6000000, 8000000, '6-8 trieu/thang', 'Giao hang nhanh chong, dam bao chat luong mon an', 'open'),
-  ('Marketing Executive', 'marketing-executive', 'TP.HCM', 'Toan thoi gian', 10000000, 15000000, '10-15 trieu/thang', 'Lap ke hoach va trien khai cac chien dich marketing', 'open'),
-  ('Nhan vien kho', 'nhan-vien-kho', 'Can Tho', 'Toan thoi gian', 7000000, 10000000, '7-10 trieu/thang', 'Quan ly kho, kiem soat hang hoa va nguyen vat lieu', 'open');
+  ('Nhân viên phục vụ', 'nhan-vien-phuc-vu', 'TP. Hồ Chí Minh - Nhiều vị trí', 'Toàn thời gian', 7000000, 9000000, '7-9 triệu/tháng', 'Phục vụ khách hàng, đảm bảo chất lượng dịch vụ tốt nhất', 'open'),
+  ('Đầu bếp', 'dau-bep', 'Hà Nội', 'Toàn thời gian', 12000000, 18000000, '12-18 triệu/tháng', 'Chế biến món ăn theo tiêu chuẩn, đảm bảo vệ sinh an toàn thực phẩm', 'open'),
+  ('Quản lý cửa hàng', 'quan-ly-cua-hang', 'Đà Nẵng', 'Toàn thời gian', 15000000, 22000000, '15-22 triệu/tháng', 'Quản lý vận hành cửa hàng, đào tạo và phát triển đội ngũ', 'open'),
+  ('Nhân viên giao hàng', 'nhan-vien-giao-hang', 'TP. Hồ Chí Minh', 'Bán thời gian', 6000000, 8000000, '6-8 triệu/tháng', 'Giao hàng nhanh chóng, đảm bảo chất lượng món ăn', 'open'),
+  ('Marketing Executive', 'marketing-executive', 'TP. Hồ Chí Minh', 'Toàn thời gian', 10000000, 15000000, '10-15 triệu/tháng', 'Lập kế hoạch và triển khai các chiến dịch marketing', 'open'),
+  ('Nhân viên kho', 'nhan-vien-kho', 'Cần Thơ', 'Toàn thời gian', 7000000, 10000000, '7-10 triệu/tháng', 'Quản lý kho, kiểm soát hàng hóa và nguyên vật liệu', 'open');
 
 INSERT INTO orders (user_id, store_id, customer_name, customer_email, customer_phone, notes, total_amount, status) VALUES
   (1, 1, 'User 1', 'user1@gmail.com', '0901000001', 'Lay them tuong ot', 93000, 'pending');
