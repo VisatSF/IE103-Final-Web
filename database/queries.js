@@ -214,6 +214,7 @@ export async function getOrderStatus(orderId) {
     status: r.order_status,
     storeId: r.store_id ? Number(r.store_id) : null,
     storeIsActive: Boolean(r.store_is_active),
+    createdAt: r.created_at ? (r.created_at instanceof Date ? r.created_at.toISOString() : String(r.created_at)) : null,
   };
 }
 
