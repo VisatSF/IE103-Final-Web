@@ -5,22 +5,22 @@ import Footer from '@/components/Footer';
 
 function TermsPage() {
   const terms = [
-    'Thong tin tren website duoc cung cap de tham khao va co the duoc dieu chinh theo thoi diem.',
-    'Tai khoan nguoi dung can cung cap thong tin chinh xac khi dang ky va tu chiu trach nhiem bao mat mat khau.',
-    'Khuyen mai, gia ban va dieu kien ap dung co the thay doi theo cua hang, khu vuc hoac thoi gian.',
-    'Nguoi dung khong duoc su dung website cho muc dich gian lan, gay roi he thong hoac xam pham quyen loi cua ben thu ba.',
-    'Jobillee co quyen cap nhat noi dung, tam dung tinh nang hoac thay doi dich vu khi can thiet.'
+    'Thông tin trên website được cung cấp để tham khảo và có thể được điều chỉnh theo thời điểm.',
+    'Tài khoản người dùng cần cung cấp thông tin chính xác khi đăng ký và tự chịu trách nhiệm bảo mật mật khẩu.',
+    'Khuyến mãi, giá bán và điều kiện áp dụng có thể thay đổi theo cửa hàng, khu vực hoặc thời gian.',
+    'Người dùng không được sử dụng website cho mục đích gian lận, gây rối hệ thống hoặc xâm phạm quyền lợi của bên thứ ba.',
+    'Jobillee có quyền cập nhật nội dung, tạm dừng tính năng hoặc thay đổi dịch vụ khi cần thiết.'
   ];
 
   return (
     <>
-      <Helmet>
-        <title>Dieu khoan su dung - Jobillee Vietnam</title>
-        <meta
-          name="description"
-          content="Dieu khoan su dung website Jobillee Vietnam."
-        />
-      </Helmet>
+        <Helmet>
+          <title>Điều khoản sử dụng - Jobillee Vietnam</title>
+          <meta
+            name="description"
+            content="Điều khoản sử dụng website Jobillee Vietnam."
+          />
+        </Helmet>
 
       <Header />
 
@@ -30,9 +30,9 @@ function TermsPage() {
           <div className="relative h-full max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center">
             <div className="text-white">
               <h1 className="text-5xl md:text-6xl font-bold mb-4" style={{ fontFamily: 'Outfit, sans-serif' }}>
-                DIEU KHOAN SU DUNG
+                ĐIỀU KHOẢN SỬ DỤNG
               </h1>
-              <p className="text-xl md:text-2xl">Quy dinh co ban khi su dung website Jobillee</p>
+              <p className="text-xl md:text-2xl">Quy định cơ bản khi sử dụng website Jobillee</p>
             </div>
           </div>
         </section>
