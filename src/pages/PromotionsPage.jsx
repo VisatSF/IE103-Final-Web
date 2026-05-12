@@ -79,7 +79,7 @@ function PromotionsPage() {
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             {isLoading ? (
               <div className="rounded-2xl bg-[rgb(var(--jobillee-cream))] p-8 text-center text-gray-600 shadow-md">
-                Đang tải danh sách khuyến mãi từ MySQL...
+                Đang tải danh sách khuyến mãi...
               </div>
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
