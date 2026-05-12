@@ -20,10 +20,58 @@ export default function CartPage() {
   const { cart, removeFromCart, updateQuantity, totalPrice } = useCart();
   const navigate = useNavigate();
   const [itemToDelete, setItemToDelete] = useState(null);
+  const [lastOrder, setLastOrder] = useState(null);
+  const [orderStatus, setOrderStatus] = useState(null);
 
   const handleCheckout = () => {
     navigate('/order', { state: { cart, totalPrice } });
   };
+
+
+  React.useEffect(() => {
+    let pollingId = null;
+    let isMounted = true;
+
+    function stopPolling() {
+      if (pollingId) {
+        clearInterval(pollingId);
+        pollingId = null;
+      }
+    }
+
+    async function fetchStatus(orderId) {
+      try {
+        const { getOrderStatusApi } = await import('@/lib/api.js');
+        const res = await getOrderStatusApi(orderId);
+        if (!isMounted) return;
+        setOrderStatus(res.status);
+        if (['completed', 'cancelled'].includes(res.status)) {
+          stopPolling();
+        }
+      } catch (err) {
+
+      }
+    }
+
+    try {
+      const raw = sessionStorage.getItem('jobillee_last_order');
+      if (raw) {
+        const parsed = JSON.parse(raw);
+        if (parsed && parsed.orderId) {
+          setLastOrder(parsed);
+          fetchStatus(parsed.orderId);
+          pollingId = setInterval(() => fetchStatus(parsed.orderId), 5000);
+        }
+      }
+    } catch (e) {
+      // ignore
+    }
+
+    return () => {
+      isMounted = false;
+      if (pollingId) clearInterval(pollingId);
+    };
+  }, []);
 
   const handleMinusClick = (item) => {
     if (item.quantity <= 1) {
@@ -127,6 +175,12 @@ export default function CartPage() {
 
               <div className="lg:col-span-1">
                 <div className="bg-white rounded-2xl shadow-sm p-6 sticky top-24">
+                    {lastOrder ? (
+                      <div className="mb-4 p-3 rounded-md bg-[rgb(var(--jobillee-cream))] text-sm border border-border/40">
+                        <div className="font-medium">Đơn đã đặt: #{lastOrder.orderId}</div>
+                        <div className="text-xs text-muted-foreground">Trạng thái cửa hàng: {orderStatus ?? 'đang kiểm tra...'}</div>
+                      </div>
+                    ) : null}
                   <h2 className="text-xl font-bold border-b pb-4 mb-4" style={{ fontFamily: 'Outfit, sans-serif' }}>Tổng đơn hàng</h2>
                   
                   <div className="space-y-3 mb-6 text-sm text-gray-600">
