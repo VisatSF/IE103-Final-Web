@@ -45,6 +45,11 @@ export default function CartPage() {
         const res = await getOrderStatusApi(orderId);
         if (!isMounted) return;
         setOrderStatus(res.status);
+        setLastOrder((prev) => ({
+          orderId: res.orderId,
+          storeId: res.storeId,
+          createdAt: res.createdAt || (prev && prev.createdAt) || null,
+        }));
         if (['completed', 'cancelled'].includes(res.status)) {
           stopPolling();
         }
@@ -177,8 +182,9 @@ export default function CartPage() {
                 <div className="bg-white rounded-2xl shadow-sm p-6 sticky top-24">
                     {lastOrder ? (
                       <div className="mb-4 p-3 rounded-md bg-[rgb(var(--jobillee-cream))] text-sm border border-border/40">
-                        <div className="font-medium">Đơn đã đặt: #{lastOrder.orderId}</div>
-                        <div className="text-xs text-muted-foreground">Trạng thái cửa hàng: {orderStatus ?? 'đang kiểm tra...'}</div>
+                          <div className="font-medium">Đơn đã đặt: #{lastOrder.orderId}</div>
+                          <div className="text-xs text-muted-foreground">Thời gian đặt: {lastOrder.createdAt ? new Date(lastOrder.createdAt).toLocaleString('vi-VN') : '—'}</div>
+                          <div className="text-xs text-muted-foreground">Trạng thái cửa hàng: {orderStatus ?? 'đang kiểm tra...'}</div>
                       </div>
                     ) : null}
                   <h2 className="text-xl font-bold border-b pb-4 mb-4" style={{ fontFamily: 'Outfit, sans-serif' }}>Tổng đơn hàng</h2>
