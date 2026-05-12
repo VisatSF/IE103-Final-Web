@@ -94,7 +94,7 @@ function MenuPage() {
     <>
       <Helmet>
         <title>Thực đơn - Jobillee Vietnam</title>
-        <meta name="description" content="Khám phá thực đơn Jobillee đang được tải trực tiếp từ hệ thống dữ liệu MySQL." />
+        <meta name="description" content="Khám phá thực đơn Jobillee đang được tải trực tiếp từ hệ thống." />
       </Helmet>
 
       <Header />
