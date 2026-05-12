@@ -227,17 +227,18 @@ export default function OrderPage() {
         })),
       });
 
+      const createdAtIso = new Date().toISOString();
       setCompletedOrder({
         orderId: result.orderId,
         subtotalAmount: totalPrice,
         discountAmount: result.discountAmount,
         totalAmount: result.totalAmount,
         items: cart,
-        createdAt: new Date().toLocaleString('vi-VN'),
+        createdAt: new Date(createdAtIso).toLocaleString('vi-VN'),
       });
 
       try {
-        sessionStorage.setItem('jobillee_last_order', JSON.stringify({ orderId: result.orderId, storeId: Number(formData.storeId) }));
+        sessionStorage.setItem('jobillee_last_order', JSON.stringify({ orderId: result.orderId, storeId: Number(formData.storeId), createdAt: createdAtIso }));
       } catch (e) {
 
       }
