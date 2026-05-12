@@ -118,13 +118,13 @@ function getPromotionValidationMessage(promotion, items, now = new Date()) {
   const normalizedNames = (items || []).map((item) => normalizeText(item.itemName ?? item.name ?? ''));
 
   if (promoCode === 'FAMILY30') {
-    const eligible = normalizedNames.length > 0 && normalizedNames.every((name) => name.includes('combo gia dinh'));
-    return eligible ? '' : 'Mã FAMILY30 chỉ áp dụng cho Combo Gia Đình.';
+    const eligible = normalizedNames.length > 0 && normalizedNames.every((name) => name.includes('combo ca nha'));
+    return eligible ? '' : 'Mã FAMILY30 chỉ áp dụng cho Combo Cả Nhà No Nê.';
   }
 
   if (promoCode === 'CHICKEN2FOR1') {
-    const eligible = normalizedNames.length > 0 && normalizedNames.every((name) => name.includes('ga gion vui ve (2 mieng)'));
-    return eligible ? '' : 'Mã CHICKEN2FOR1 chỉ áp dụng cho Gà Giòn Vui Vẻ (2 miếng).';
+    const eligible = normalizedNames.length > 0 && normalizedNames.every((name) => name.includes('2 mieng ga gion'));
+    return eligible ? '' : 'Mã CHICKEN2FOR1 chỉ áp dụng cho 2 miếng gà giòn.';
   }
 
   if (promoCode === 'MONDAY20') {
