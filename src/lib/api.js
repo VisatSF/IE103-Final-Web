@@ -32,6 +32,30 @@ async function apiRequest(path, options = {}) {
   return payload;
 }
 
+function dedupeStores(stores = []) {
+  const seen = new Set();
+
+  return stores.filter((store) => {
+    const key = [
+      store.id,
+      store.name,
+      store.address,
+      store.phone,
+      store.cityName,
+      store.districtName,
+    ]
+      .map((value) => String(value ?? '').trim().toLowerCase())
+      .join('|');
+
+    if (seen.has(key)) {
+      return false;
+    }
+
+    seen.add(key);
+    return true;
+  });
+}
+
 export function loginApi(payload) {
   return apiRequest('/api/auth/login', {
     method: 'POST',
@@ -68,7 +92,10 @@ export function getStoresApi({ city = '', district = '' } = {}) {
   if (city) params.set('city', city);
   if (district) params.set('district', district);
   const query = params.toString() ? `?${params.toString()}` : '';
-  return apiRequest(`/api/stores${query}`);
+  return apiRequest(`/api/stores${query}`).then((payload) => ({
+    ...payload,
+    stores: dedupeStores(payload.stores || []),
+  }));
 }
 
 export function createOrderApi(payload) {
