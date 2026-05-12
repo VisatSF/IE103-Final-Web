@@ -27,6 +27,7 @@ DROP PROCEDURE IF EXISTS sp_clear_orders_for_store$$
 DROP PROCEDURE IF EXISTS sp_get_store_cleanup_settings$$
 DROP PROCEDURE IF EXISTS sp_update_store_cleanup_settings$$
 DROP PROCEDURE IF EXISTS sp_cleanup_store_orders_before$$
+DROP PROCEDURE IF EXISTS sp_get_order_status$$
 
 CREATE PROCEDURE sp_get_menu_categories()
 BEGIN
@@ -216,6 +217,7 @@ CREATE PROCEDURE sp_create_order(
   IN p_items_json JSON
 )
 BEGIN
+  DECLARE v_store_exists TINYINT DEFAULT 0;
   DECLARE v_last_number BIGINT UNSIGNED DEFAULT 0;
   DECLARE v_store_order_number BIGINT UNSIGNED DEFAULT 0;
   DECLARE v_order_id BIGINT UNSIGNED DEFAULT 0;
@@ -227,6 +229,14 @@ BEGIN
     ROLLBACK;
     RESIGNAL;
   END;
+
+  SELECT COUNT(*) INTO v_store_exists
+  FROM stores
+  WHERE id = p_store_id;
+
+  IF v_store_exists = 0 THEN
+    SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Store not found';
+  END IF;
 
   START TRANSACTION;
 
@@ -241,7 +251,7 @@ BEGIN
   FOR UPDATE;
 
   IF v_last_number = 0 THEN
-    SELECT GREATEST(COALESCE(MAX(store_order_number), 0), COUNT(*))
+    SELECT COALESCE(MAX(store_order_number), 0)
     INTO v_last_number
     FROM orders
     WHERE store_id = p_store_id;
@@ -483,6 +493,19 @@ BEGIN
   WHERE store_id = p_store_id AND created_at < p_before_date;
 
   SELECT ROW_COUNT() AS affected_rows;
+END$$
+
+CREATE PROCEDURE sp_get_order_status(IN p_order_id BIGINT UNSIGNED)
+BEGIN
+  SELECT
+    o.id AS order_id,
+    o.status AS order_status,
+    o.store_id AS store_id,
+    COALESCE(s.is_active, 0) AS store_is_active
+  FROM orders o
+  LEFT JOIN stores s ON s.id = o.store_id
+  WHERE o.id = p_order_id
+  LIMIT 1;
 END$$
 
 DELIMITER ;
