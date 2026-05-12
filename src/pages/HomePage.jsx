@@ -15,25 +15,25 @@ function HomePage() {
 
   const menuProducts = [
     {
-      image: 'https://jollibee.com.vn/media/catalog/product/cache/9011257231b13517d19d9bae81fd87cc/c/a/cap_doi_an_y_78k_1g1m-compressed.jpg',
+      image: '/combo-mot-minh-an-ngon.jpg',
       title: 'Combo Một Mình Ăn Ngon',
       description: '1 miếng gà giòn + 1 mì ý sốt bò bằm, gọn gàng và no đủ.',
       buttonText: 'ĐẶT NGAY'
     },
     {
-      image: 'https://jollibee.com.vn/media/catalog/product/cache/9011257231b13517d19d9bae81fd87cc/g/_/g_s_t_cay_-_6-compressed_1.jpg',
+      image: '/com-ga-sot-cay.jpg',
       title: 'Cơm gà sốt cay',
       description: '1 miếng gà sốt cay + cơm nóng, đậm vị và dễ ăn.',
       buttonText: 'ĐẶT NGAY'
     },
     {
-      image: 'https://jollibee.com.vn/media/catalog/product/cache/9011257231b13517d19d9bae81fd87cc/m/_/m_jolly_-_1-compressed.jpg',
+      image: '/my-y-sot-bo-bam-vua.jpg',
       title: 'Mỳ Ý sốt bò bằm (Vừa)',
       description: 'Mỳ Ý sốt bò bằm cỡ vừa, hợp cho bữa trưa nhanh gọn.',
       buttonText: 'ĐẶT NGAY'
     },
     {
-      image: 'https://jollibee.com.vn/media/catalog/product/cache/9011257231b13517d19d9bae81fd87cc/m/_/m_n_tr_ng_mi_ng_-_1.png',
+      image: '/banh-xoai-dao.webp',
       title: 'Bánh xoài đào',
       description: 'Tráng miệng ngọt mát, cân bằng vị cho bữa ăn.',
       buttonText: 'ĐẶT NGAY'
