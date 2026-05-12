@@ -19,10 +19,6 @@ function calculateDiscount(promotion, subtotalAmount) {
     return 0;
   }
 
-  if (String(promotion.code || '').trim().toUpperCase() === 'CHICKEN2FOR1') {
-    return 0;
-  }
-
   if (promotion.discountType === 'percentage') {
     return Math.round((subtotalAmount * Number(promotion.discountValue)) / 100);
   }
