@@ -501,6 +501,7 @@ BEGIN
     o.id AS order_id,
     o.status AS order_status,
     o.store_id AS store_id,
+    o.created_at AS created_at,
     COALESCE(s.is_active, 0) AS store_is_active
   FROM orders o
   LEFT JOIN stores s ON s.id = o.store_id
