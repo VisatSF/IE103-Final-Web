@@ -5,20 +5,20 @@ import Footer from '@/components/Footer';
 
 function PrivacyPage() {
   const items = [
-    'Thong tin ca nhan duoc thu thap tu cac form nhu dang ky, lien he va ung tuyen.',
-    'Du lieu duoc su dung de ho tro van hanh dich vu, cham soc khach hang va cai thien trai nghiem su dung.',
-    'Jobillee khong chia se thong tin ca nhan trai phep va se ap dung bien phap bao mat phu hop.',
-    'Nguoi dung co the yeu cau cap nhat, chinh sua hoac xoa thong tin trong pham vi phap luat cho phep.',
-    'Chinh sach nay co the duoc cap nhat khi co thay doi ve quy trinh van hanh hoac quy dinh lien quan.'
+    'Thông tin cá nhân được thu thập từ các form như đăng ký, liên hệ và ứng tuyển.',
+    'Dữ liệu được sử dụng để hỗ trợ vận hành dịch vụ, chăm sóc khách hàng và cải thiện trải nghiệm sử dụng.',
+    'Jobillee không chia sẻ thông tin cá nhân trái phép và sẽ áp dụng biện pháp bảo mật phù hợp.',
+    'Người dùng có thể yêu cầu cập nhật, chỉnh sửa hoặc xóa thông tin trong phạm vi pháp luật cho phép.',
+    'Chính sách này có thể được cập nhật khi có thay đổi về quy trình vận hành hoặc quy định liên quan.'
   ];
 
   return (
     <>
       <Helmet>
-        <title>Chinh sach bao mat - Jobillee Vietnam</title>
+        <title>Chính sách bảo mật - Jobillee Vietnam</title>
         <meta
           name="description"
-          content="Thong tin ve cach Jobillee Vietnam thu thap, luu tru va su dung du lieu nguoi dung."
+          content="Thông tin về cách Jobillee Vietnam thu thập, lưu trữ và sử dụng dữ liệu người dùng."
         />
       </Helmet>
 
@@ -30,9 +30,9 @@ function PrivacyPage() {
           <div className="relative h-full max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center">
             <div className="text-[rgb(var(--jobillee-dark))]">
               <h1 className="text-5xl md:text-6xl font-bold mb-4" style={{ fontFamily: 'Outfit, sans-serif' }}>
-                CHINH SACH BAO MAT
+                CHÍNH SÁCH BẢO MẬT
               </h1>
-              <p className="text-xl md:text-2xl">Cam ket bao ve thong tin cua khach hang</p>
+              <p className="text-xl md:text-2xl">Cam kết bảo vệ thông tin của khách hàng</p>
             </div>
           </div>
         </section>
