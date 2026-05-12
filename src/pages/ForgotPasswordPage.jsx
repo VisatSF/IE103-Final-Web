@@ -13,17 +13,17 @@ function ForgotPasswordPage() {
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    toast.success('Neu email ton tai trong he thong, huong dan dat lai mat khau se duoc gui toi ban.');
+    toast.success('Nếu email tồn tại trong hệ thống, hướng dẫn đặt lại mật khẩu sẽ được gửi tới bạn.');
     setEmail('');
   };
 
   return (
     <>
       <Helmet>
-        <title>Quen mat khau - Jobillee Vietnam</title>
+        <title>Quên mật khẩu - Jobillee Vietnam</title>
         <meta
           name="description"
-          content="Gui yeu cau dat lai mat khau de tiep tuc su dung tai khoan Jobillee."
+          content="Gửi yêu cầu đặt lại mật khẩu để tiếp tục sử dụng tài khoản Jobillee."
         />
       </Helmet>
 
@@ -37,10 +37,10 @@ function ForgotPasswordPage() {
             </div>
 
             <h1 className="text-3xl font-bold text-[rgb(var(--jobillee-red))] mb-4 text-center" style={{ fontFamily: 'Outfit, sans-serif' }}>
-              QUEN MAT KHAU
+              QUÊN MẬT KHẨU
             </h1>
             <p className="text-gray-600 text-center leading-relaxed mb-8">
-              Nhap email da dang ky. Chung toi se gui huong dan dat lai mat khau den hop thu cua ban.
+              Nhập email đã đăng ký. Chúng tôi sẽ gửi hướng dẫn đặt lại mật khẩu đến hộp thư của bạn.
             </p>
 
             <form onSubmit={handleSubmit} className="space-y-6">
@@ -62,7 +62,7 @@ function ForgotPasswordPage() {
                 type="submit"
                 className="w-full bg-[rgb(var(--jobillee-red))] hover:bg-[rgb(var(--jobillee-red))]/90 text-white font-bold py-6 transition-all duration-200 active:scale-98"
               >
-                Gui yeu cau
+                Gửi yêu cầu
               </Button>
             </form>
           </div>
