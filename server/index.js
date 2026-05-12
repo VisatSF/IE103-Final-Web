@@ -194,6 +194,7 @@ app.get('/api/menu', async (_request, response) => {
         name: item.name,
         description: item.description,
         price: Number(item.price),
+        imageUrl: item.image_url,
       })),
     });
   } catch (error) {
