@@ -513,6 +513,7 @@ app.get('/api/orders/:orderId/status', async (request, response) => {
       status: status.status,
       storeId: status.storeId,
       storeIsActive: status.storeIsActive,
+      createdAt: status.createdAt || null,
     });
   } catch (error) {
     response.status(500).json({ message: error.message });
