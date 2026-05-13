@@ -16,6 +16,7 @@ import {
   getOrdersForCustomer,
   getOrderStatus,
   getPromotionByCode,
+  calculateDiscount,
   getStoreById,
   getStoreCleanupSettings,
   getStores,
@@ -28,6 +29,9 @@ import {
 import { loadDatabaseEnv } from './loadDatabaseEnv.js';
 
 loadDatabaseEnv();
+
+import http from 'http';
+import https from 'https';
 
 const app = express();
 const port = Number(process.env.PORT || process.env.API_PORT || 3001);
@@ -79,10 +83,6 @@ async function applyCleanupIfNeeded(storeId) {
 
 function computeDiscount(promotion, subtotalAmount) {
   if (!promotion) {
-    return 0;
-  }
-
-  if (String(promotion.promo_code || '').trim().toUpperCase() === 'CHICKEN2FOR1') {
     return 0;
   }
 
@@ -345,7 +345,8 @@ app.post('/api/orders', async (request, response) => {
         return response.status(400).json({ message: promotionValidationMessage });
       }
 
-      discountAmount = computeDiscount(promotion, subtotalAmount);
+      const calc = await calculateDiscount(normalizedPromotionCode, items);
+      discountAmount = Number(calc.discountAmount || 0);
     }
 
     const orderNotes = [notes, getPromotionOrderNote(promotion)].filter(Boolean).join('\n');
@@ -576,6 +577,52 @@ app.post('/api/store/cleanup/:storeId', async (request, response) => {
   }
 });
 
+async function startSelfPing() {
+  const enabled = !(process.env.SELF_PING === 'false' || process.env.SELF_PING === '0');
+  if (!enabled) {
+    console.log('Self-ping disabled (SELF_PING set to false or 0).');
+    return;
+  }
+
+  const intervalMs = Number(process.env.SELF_PING_INTERVAL_MS || 5 * 60 * 1000);
+  const url = process.env.SELF_PING_URL || `http://localhost:${port}/api/health`;
+
+  console.log(`Starting self-ping to ${url} every ${intervalMs}ms`);
+  // lightweight fetch fallback using built-in http/https if global fetch isn't available
+  function fetchWithNative(targetUrl, timeout = 10000) {
+    return new Promise((resolve, reject) => {
+      try {
+        const u = new URL(targetUrl);
+        const lib = u.protocol === 'https:' ? https : http;
+        const req = lib.request(u, { method: 'GET', timeout }, (res) => {
+          // drain the response then resolve with a simple status object
+          res.on('data', () => {});
+          res.on('end', () => {});
+          resolve({ status: res.statusCode });
+        });
+
+        req.on('error', reject);
+        req.on('timeout', () => req.destroy(new Error('timeout')));
+        req.end();
+      } catch (err) {
+        reject(err);
+      }
+    });
+  }
+
+  const doFetch = typeof global.fetch === 'function' ? (u) => global.fetch(u) : (u) => fetchWithNative(u);
+
+  setInterval(async () => {
+    try {
+      const res = await doFetch(url);
+      const status = res && typeof res.status !== 'undefined' ? res.status : (res?.statusCode ?? 'no status');
+      console.log(`[self-ping] ${url} -> ${status}`);
+    } catch (err) {
+      console.error('[self-ping] ping failed:', err?.message || err);
+    }
+  }, intervalMs);
+}
+
 app.listen(port, async () => {
   try {
     await checkDatabaseConnection();
@@ -583,4 +630,9 @@ app.listen(port, async () => {
   } catch (error) {
     console.error(`MySQL API server started at http://localhost:${port} but database connection failed: ${error.message}`);
   }
+
+  // Start the background self-pinger (non-blocking).
+  startSelfPing().catch((err) => {
+    console.error('Failed to start self-ping:', err?.message || err);
+  });
 });
