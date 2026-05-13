@@ -101,14 +101,12 @@ BEGIN
   DECLARE v_discount_amount DECIMAL(12,2) DEFAULT 0;
   DECLARE v_message TEXT DEFAULT '';
 
-  -- load promotion
   SELECT id, discount_type, discount_value, status
   INTO v_promotion_id, v_discount_type, v_discount_value, v_status
   FROM promotions
   WHERE promo_code = p_promo_code
   LIMIT 1;
 
-  -- compute subtotal from items JSON
   SELECT COALESCE(SUM(j.unit_price * j.quantity), 0)
   INTO v_subtotal
   FROM JSON_TABLE(p_items_json, '$[*]' COLUMNS(
