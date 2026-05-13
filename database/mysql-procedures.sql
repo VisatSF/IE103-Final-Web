@@ -7,6 +7,7 @@ DROP PROCEDURE IF EXISTS sp_get_menu_items_by_category$$
 DROP PROCEDURE IF EXISTS sp_get_published_news$$
 DROP PROCEDURE IF EXISTS sp_get_active_promotions$$
 DROP PROCEDURE IF EXISTS sp_get_promotion_by_code$$
+DROP PROCEDURE IF EXISTS sp_calculate_discount$$
 DROP PROCEDURE IF EXISTS sp_get_cities$$
 DROP PROCEDURE IF EXISTS sp_get_districts$$
 DROP PROCEDURE IF EXISTS sp_get_stores$$
@@ -85,6 +86,51 @@ BEGIN
   FROM promotions
   WHERE promo_code = p_promo_code
   LIMIT 1;
+END$$
+
+CREATE PROCEDURE sp_calculate_discount(
+  IN p_promo_code VARCHAR(100),
+  IN p_items_json JSON
+)
+BEGIN
+  DECLARE v_promotion_id BIGINT DEFAULT NULL;
+  DECLARE v_discount_type VARCHAR(50) DEFAULT NULL;
+  DECLARE v_discount_value DECIMAL(12,2) DEFAULT 0;
+  DECLARE v_status VARCHAR(50) DEFAULT NULL;
+  DECLARE v_subtotal DECIMAL(12,2) DEFAULT 0;
+  DECLARE v_discount_amount DECIMAL(12,2) DEFAULT 0;
+  DECLARE v_message TEXT DEFAULT '';
+
+  -- load promotion
+  SELECT id, discount_type, discount_value, status
+  INTO v_promotion_id, v_discount_type, v_discount_value, v_status
+  FROM promotions
+  WHERE promo_code = p_promo_code
+  LIMIT 1;
+
+  -- compute subtotal from items JSON
+  SELECT COALESCE(SUM(j.unit_price * j.quantity), 0)
+  INTO v_subtotal
+  FROM JSON_TABLE(p_items_json, '$[*]' COLUMNS(
+    menu_item_id BIGINT PATH '$.menuItemId',
+    item_name VARCHAR(200) PATH '$.itemName',
+    unit_price DECIMAL(10,2) PATH '$.unitPrice',
+    quantity INT PATH '$.quantity'
+  )) AS j;
+
+  IF v_promotion_id IS NULL OR v_status <> 'active' THEN
+    SET v_discount_amount = 0;
+    SET v_message = 'Mã khuyến mãi không hợp lệ.';
+  ELSE
+    IF v_discount_type = 'percentage' THEN
+      SET v_discount_amount = ROUND(v_subtotal * v_discount_value / 100);
+    ELSE
+      SET v_discount_amount = LEAST(v_subtotal, v_discount_value);
+    END IF;
+    SET v_message = '';
+  END IF;
+
+  SELECT v_discount_amount AS discount_amount, v_message AS message, v_promotion_id AS promotion_id;
 END$$
 
 CREATE PROCEDURE sp_get_cities()
