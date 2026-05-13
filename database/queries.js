@@ -79,6 +79,26 @@ export async function getPromotionByCode(promoCode) {
   return rows[0] || null;
 }
 
+export async function calculateDiscount(promoCode, items = []) {
+  const itemsJson = JSON.stringify(
+    (items || []).map((item) => ({
+      menuItemId: item.menuItemId ?? item.id ?? null,
+      itemName: item.itemName ?? item.name ?? null,
+      unitPrice: Number(item.unitPrice ?? item.price ?? 0),
+      quantity: Number(item.quantity ?? 0),
+    }))
+  );
+
+  const resultSets = await callProcedure('sp_calculate_discount', [promoCode, itemsJson]);
+  const rows = getProcedureRows(resultSets);
+  const r = rows[0] || { discount_amount: 0, message: '' };
+  return {
+    discountAmount: Number(r.discount_amount || 0),
+    message: r.message || '',
+    promotionId: r.promotion_id || null,
+  };
+}
+
 export async function getCities() {
   const resultSets = await callProcedure('sp_get_cities');
   return getProcedureRows(resultSets);
