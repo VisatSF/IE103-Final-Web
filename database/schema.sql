@@ -109,11 +109,13 @@ CREATE TABLE IF NOT EXISTS menu_items (
   is_featured TINYINT(1) NOT NULL DEFAULT 0,
   is_active TINYINT(1) NOT NULL DEFAULT 1,
   display_order INT NOT NULL DEFAULT 0,
+  stock INT NOT NULL DEFAULT 0 CHECK (stock >= 0),
   created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
   updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (id),
   UNIQUE KEY uq_menu_items_slug (slug),
   KEY idx_menu_items_category_id (category_id),
+  KEY idx_menu_items_category_active (category_id, is_active),
   KEY idx_menu_items_active_featured (is_active, is_featured),
   CONSTRAINT fk_menu_items_category_id
     FOREIGN KEY (category_id) REFERENCES menu_categories (id)
