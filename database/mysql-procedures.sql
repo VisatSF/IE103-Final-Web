@@ -267,6 +267,10 @@ BEGIN
   DECLARE v_order_id BIGINT UNSIGNED DEFAULT 0;
   DECLARE v_subtotal_amount DECIMAL(12, 2) DEFAULT 0;
   DECLARE v_total_amount DECIMAL(12, 2) DEFAULT 0;
+  DECLARE v_missing_items INT DEFAULT 0;
+  DECLARE v_insufficient_items INT DEFAULT 0;
+  DECLARE v_rows_updated INT DEFAULT 0;
+  DECLARE v_expected_count INT DEFAULT 0;
 
   DECLARE EXIT HANDLER FOR SQLEXCEPTION
   BEGIN
@@ -279,7 +283,7 @@ BEGIN
   WHERE id = p_store_id;
 
   IF v_store_exists = 0 THEN
-    SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Store not found';
+    SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Shop đã nghỉ rùi nè, chọn shop khác đi bạn ơi';
   END IF;
 
   START TRANSACTION;
@@ -321,6 +325,42 @@ BEGIN
   )) AS j;
 
   SET v_total_amount = GREATEST(v_subtotal_amount - COALESCE(p_discount_amount, 0), 0);
+
+  DROP TEMPORARY TABLE IF EXISTS tmp_items;
+  CREATE TEMPORARY TABLE tmp_items AS
+  SELECT menu_item_id, SUM(quantity) AS qty
+  FROM JSON_TABLE(p_items_json, '$[*]' COLUMNS(
+    menu_item_id BIGINT PATH '$.menuItemId',
+    quantity INT PATH '$.quantity'
+  )) AS j
+  GROUP BY menu_item_id;
+
+  SELECT COUNT(*) INTO v_missing_items
+  FROM tmp_items t
+  LEFT JOIN menu_items m ON m.id = t.menu_item_id
+  WHERE m.id IS NULL;
+
+  IF v_missing_items > 0 THEN
+    DROP TEMPORARY TABLE IF EXISTS tmp_items;
+    ROLLBACK;
+    SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Một hoặc nhiều món trong đơn hàng không tồn tại';
+  END IF;
+
+  UPDATE menu_items m
+  JOIN tmp_items t ON m.id = t.menu_item_id
+  SET m.stock = m.stock - t.qty
+  WHERE m.stock >= t.qty;
+
+  SET v_rows_updated = ROW_COUNT();
+  SELECT COUNT(*) INTO v_expected_count FROM tmp_items;
+
+  IF v_rows_updated <> v_expected_count THEN
+    DROP TEMPORARY TABLE IF EXISTS tmp_items;
+    ROLLBACK;
+    SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Món này đã hết hàng';
+  END IF;
+
+  DROP TEMPORARY TABLE IF EXISTS tmp_items;
 
   INSERT INTO orders (
     store_order_number,
