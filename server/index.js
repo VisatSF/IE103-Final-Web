@@ -398,21 +398,21 @@ app.post('/api/orders', async (request, response) => {
       totalAmount: Math.max(0, subtotalAmount - discountAmount),
     });
   } catch (error) {
+    const sqlMessage = error.sqlMessage || error.message || 'Không thể tạo đơn hàng.';
+    const statusCode = error.status || (error.sqlState === '45000' ? 400 : 500);
+    const normalizedMessage = String(sqlMessage).replace(/^ER_SIGNAL_EXCEPTION:\s*/i, '').trim();
+
     console.error('[POST /api/orders] order creation failed', {
-      message: error.message,
-      status: error.status,
-      outOfStockItem: error.outOfStockItem,
+      message: normalizedMessage,
+      status: statusCode,
+      sqlState: error.sqlState,
+      code: error.code,
       stack: error.stack,
     });
 
-    if (error.status) {
-      return response.status(error.status).json({
-        message: error.message,
-        ...(error.outOfStockItem ? { outOfStockItem: error.outOfStockItem } : {}),
-      });
-    }
-
-    response.status(500).json({ message: error.message });
+    return response.status(statusCode).json({
+      message: normalizedMessage,
+    });
   }
 });
 
