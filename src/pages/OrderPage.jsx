@@ -244,9 +244,12 @@ export default function OrderPage() {
     } catch (error) {
       console.error('[OrderPage] Order creation error:', error);
       
-      // Backend trả về message trực tiếp khi có lỗi tồn kho
+      // Backend trả về message trực tiếp khi có lỗi tồn kho từ MySQL stored procedure
       const errorMessage = error?.message || 'Đặt hàng thất bại.';
-      toast.error(errorMessage, { duration: 5000 });
+      toast.error(errorMessage, { 
+        position: 'top-center',
+        duration: 5000 
+      });
     } finally {
       setIsSubmitting(false);
     }
