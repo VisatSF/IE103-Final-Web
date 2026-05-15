@@ -207,6 +207,7 @@ export default function OrderPage() {
 
     try {
       setIsSubmitting(true);
+
       const result = await createOrderApi({
         userId: user?.id ?? null,
         customerName: formData.customerName,
