@@ -400,8 +400,18 @@ app.post('/api/orders', async (request, response) => {
   } catch (error) {
     console.error('[POST /api/orders] order creation failed', {
       message: error.message,
+      status: error.status,
+      outOfStockItem: error.outOfStockItem,
       stack: error.stack,
     });
+
+    if (error.status) {
+      return response.status(error.status).json({
+        message: error.message,
+        ...(error.outOfStockItem ? { outOfStockItem: error.outOfStockItem } : {}),
+      });
+    }
+
     response.status(500).json({ message: error.message });
   }
 });
