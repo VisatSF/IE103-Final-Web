@@ -26,7 +26,10 @@ async function apiRequest(path, options = {}) {
     const message = typeof payload === 'object' && payload?.message
       ? payload.message
       : 'Yeu cau that bai.';
-    throw new Error(message);
+    const error = new Error(message);
+    error.payload = payload;
+    error.status = response.status;
+    throw error;
   }
 
   return payload;
