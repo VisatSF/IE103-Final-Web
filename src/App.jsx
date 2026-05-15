@@ -5,6 +5,7 @@ import ScrollToTop from './components/ScrollToTop.jsx';
 import { AuthProvider } from './contexts/AuthContext.jsx';
 import { CartProvider } from './contexts/CartContext.jsx';
 import ProtectedRoute from './components/ProtectedRoute.jsx';
+import { Toaster } from './components/ui/sonner.jsx';
 
 import HomePage from './pages/HomePage.jsx';
 import AboutPage from './pages/AboutPage.jsx';
@@ -35,6 +36,7 @@ function App() {
       <CartProvider>
         <Router>
           <ScrollToTop />
+          <Toaster position="top-center" />
           <Routes>
             <Route path="/" element={<HomePage />} />
             <Route path="/about" element={<AboutPage />} />
