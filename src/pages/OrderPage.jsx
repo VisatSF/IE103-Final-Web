@@ -242,7 +242,15 @@ export default function OrderPage() {
       clearCart();
       toast.success(`Đặt đơn thành công. Mã đơn #${result.orderId}.`);
     } catch (error) {
-      toast.error(error.message);
+      const outOfStock = error?.payload?.outOfStockItem || error?.outOfStockItem;
+      if (outOfStock) {
+        const message = outOfStock.stock <= 0
+          ? `Món "${outOfStock.name}" hiện tại đã hết hàng.`
+          : `Món "${outOfStock.name}" hiện tại chỉ còn ${outOfStock.stock}.`;
+        toast.error(message, { position: 'top-left', duration: 5000 });
+      } else {
+        toast.error(error.message, { position: 'top-left', duration: 5000 });
+      }
     } finally {
       setIsSubmitting(false);
     }
