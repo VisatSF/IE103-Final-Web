@@ -248,7 +248,7 @@ export default function OrderPage() {
       const errorMessage = error?.message || 'Đặt hàng thất bại.';
       toast.error(errorMessage, { 
         position: 'top-center',
-        duration: 5000 
+        duration: 2000 
       });
     } finally {
       setIsSubmitting(false);
