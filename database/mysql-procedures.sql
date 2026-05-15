@@ -365,10 +365,12 @@ BEGIN
     ROLLBACK;
 
     IF v_out_of_stock_amount <= 0 THEN
-      SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = CONCAT('Món "', v_out_of_stock_name, '" hiện tại đã hết hàng.');
+      SET @order_error_message = CONCAT('Món "', v_out_of_stock_name, '" hiện tại đã hết hàng.');
     ELSE
-      SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = CONCAT('Món "', v_out_of_stock_name, '" hiện tại chỉ còn ', v_out_of_stock_amount, '.');
+      SET @order_error_message = CONCAT('Món "', v_out_of_stock_name, '" hiện tại chỉ còn ', v_out_of_stock_amount, '.');
     END IF;
+
+    SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = @order_error_message;
   END IF;
 
   UPDATE menu_items m
