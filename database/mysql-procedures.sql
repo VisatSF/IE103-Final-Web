@@ -273,6 +273,7 @@ BEGIN
   DECLARE v_expected_count INT DEFAULT 0;
   DECLARE v_out_of_stock_name VARCHAR(200) DEFAULT '';
   DECLARE v_out_of_stock_amount INT DEFAULT 0;
+  DECLARE v_order_error_message TEXT DEFAULT '';
 
   DECLARE EXIT HANDLER FOR SQLEXCEPTION
   BEGIN
@@ -365,12 +366,12 @@ BEGIN
     ROLLBACK;
 
     IF v_out_of_stock_amount <= 0 THEN
-      SET @order_error_message = CONCAT('Món "', v_out_of_stock_name, '" hiện tại đã hết hàng.');
+      SET v_order_error_message = CONCAT('Món "', v_out_of_stock_name, '" hiện tại đã hết hàng.');
     ELSE
-      SET @order_error_message = CONCAT('Món "', v_out_of_stock_name, '" hiện tại chỉ còn ', v_out_of_stock_amount, '.');
+      SET v_order_error_message = CONCAT('Món "', v_out_of_stock_name, '" hiện tại chỉ còn ', v_out_of_stock_amount, '.');
     END IF;
 
-    SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = @order_error_message;
+    SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = v_order_error_message;
   END IF;
 
   UPDATE menu_items m
