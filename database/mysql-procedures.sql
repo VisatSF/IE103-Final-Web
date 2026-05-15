@@ -271,6 +271,8 @@ BEGIN
   DECLARE v_insufficient_items INT DEFAULT 0;
   DECLARE v_rows_updated INT DEFAULT 0;
   DECLARE v_expected_count INT DEFAULT 0;
+  DECLARE v_out_of_stock_name VARCHAR(200) DEFAULT '';
+  DECLARE v_out_of_stock_amount INT DEFAULT 0;
 
   DECLARE EXIT HANDLER FOR SQLEXCEPTION
   BEGIN
@@ -344,6 +346,29 @@ BEGIN
     DROP TEMPORARY TABLE IF EXISTS tmp_items;
     ROLLBACK;
     SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Một hoặc nhiều món trong đơn hàng không tồn tại';
+  END IF;
+
+  SELECT COUNT(*) INTO v_insufficient_items
+  FROM tmp_items t
+  JOIN menu_items m ON m.id = t.menu_item_id
+  WHERE m.stock < t.qty;
+
+  IF v_insufficient_items > 0 THEN
+    SELECT m.name, m.stock
+    INTO v_out_of_stock_name, v_out_of_stock_amount
+    FROM tmp_items t
+    JOIN menu_items m ON m.id = t.menu_item_id
+    WHERE m.stock < t.qty
+    LIMIT 1;
+
+    DROP TEMPORARY TABLE IF EXISTS tmp_items;
+    ROLLBACK;
+
+    IF v_out_of_stock_amount <= 0 THEN
+      SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = CONCAT('Món "', v_out_of_stock_name, '" hiện tại đã hết hàng.');
+    ELSE
+      SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = CONCAT('Món "', v_out_of_stock_name, '" hiện tại chỉ còn ', v_out_of_stock_amount, '.');
+    END IF;
   END IF;
 
   UPDATE menu_items m
