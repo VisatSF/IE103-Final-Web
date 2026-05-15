@@ -197,6 +197,7 @@ app.get('/api/menu', async (_request, response) => {
         price: Number(item.price),
         imageUrl: item.image_url,
       })),
+
     });
   } catch (error) {
     response.status(500).json({ message: error.message });
