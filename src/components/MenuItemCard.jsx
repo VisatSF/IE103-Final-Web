@@ -69,7 +69,6 @@ export default function MenuItemCard({ item }) {
         <p className="text-muted-foreground text-sm mb-6 flex-grow line-clamp-2">
           {item.description || 'Món ăn thơm ngon, đậm đà hương vị đặc trưng của Jobillee.'}
         </p>
-        
         <Button 
           className="w-full mt-auto gap-2 font-bold rounded-xl" 
           variant="default"
