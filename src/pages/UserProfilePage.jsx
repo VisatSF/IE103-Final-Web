@@ -258,7 +258,7 @@ function UserProfilePage() {
                   </div>
                   <div className="p-8">
                     {isOrdersLoading ? (
-                      <div className="text-center py-12 text-muted-foreground">Đang tải đơn hàng từ MySQL...</div>
+                      <div className="text-center py-12 text-muted-foreground">Đang tải đơn hàng...</div>
                     ) : orders.length === 0 ? (
                       <div className="text-center py-12">
                         <ShoppingBag className="w-16 h-16 text-muted-foreground/50 mx-auto mb-4" />
@@ -312,7 +312,7 @@ function UserProfilePage() {
                   </div>
                   <div className="p-8">
                     {isPromotionsLoading ? (
-                      <div className="text-center py-12 text-muted-foreground">Đang tải khuyến mãi từ MySQL...</div>
+                      <div className="text-center py-12 text-muted-foreground">Đang tải khuyến mãi...</div>
                     ) : availablePromotions.length === 0 ? (
                       <div className="text-center py-12">
                         <Gift className="w-16 h-16 text-muted-foreground/50 mx-auto mb-4" />
@@ -348,7 +348,7 @@ function UserProfilePage() {
                   <Info className="w-16 h-16 text-muted-foreground/50 mb-4" />
                   <h3 className="text-xl font-bold mb-2">Thông tin bổ sung</h3>
                   <p className="text-muted-foreground">
-                    Phần hồ sơ cơ bản đã giảm phụ thuộc vào dữ liệu giả. Các trường nâng cao như avatar, ngày sinh, địa chỉ hiện vẫn lưu cục bộ vì backend chưa có schema riêng.
+                    Tính năng này đang được phát triển và sẽ sớm ra mắt trong các bản cập nhật tiếp theo. Hãy theo dõi để nhận thêm nhiều tiện ích hấp dẫn khác!.
                   </p>
                 </div>
               )}
